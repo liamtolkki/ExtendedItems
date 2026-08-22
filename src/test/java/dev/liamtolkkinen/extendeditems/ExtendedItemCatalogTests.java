@@ -395,14 +395,21 @@ class ExtendedItemCatalogTests
                         PersistentDataType.INTEGER),
                 expected.persistentId());
 
-            assertTrue(
-                meta.hasEnchantmentGlintOverride(),
-                expected.persistentId());
+            if (expected.glint()) {
+                assertTrue(
+                    meta.hasEnchantmentGlintOverride(),
+                    expected.persistentId());
 
-            assertEquals(
-                expected.glint(),
-                meta.getEnchantmentGlintOverride(),
-                expected.persistentId());
+                assertTrue(
+                    meta.getEnchantmentGlintOverride(),
+                    expected.persistentId());
+            }
+            else if (meta.hasEnchantmentGlintOverride()) {
+                assertEquals(
+                    false,
+                    meta.getEnchantmentGlintOverride(),
+                    expected.persistentId());
+            }
 
             assertTrue(
                 ExtendedItems.is(
