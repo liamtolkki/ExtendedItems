@@ -12,6 +12,14 @@ import org.bukkit.inventory.ItemFlag;
  *
  * <p>Gameplay-specific instance state belongs to the consuming plugin and is intentionally not
  * represented here.</p>
+ *
+ * @param id stable item identity
+ * @param version ExtendedItems format version for this item
+ * @param material vanilla material used by the item
+ * @param displayName common display name
+ * @param lore common lore
+ * @param glint whether the item should force the enchantment glint
+ * @param itemFlags common item flags
  */
 public record ExtendedItemDefinition(
     ExtendedItemId id,
@@ -37,6 +45,11 @@ public record ExtendedItemDefinition(
         itemFlags = Set.copyOf(itemFlags);
     }
 
+    /**
+     * Gets the stable persisted ID from the definition's logical ID.
+     *
+     * @return persistent item ID
+     */
     public String persistentId() {
         return id.persistentId();
     }

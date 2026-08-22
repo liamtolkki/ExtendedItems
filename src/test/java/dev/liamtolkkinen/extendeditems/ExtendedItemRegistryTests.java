@@ -5,54 +5,104 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import dev.liamtolkkinen.extendeditems.internal.ExtendedItemRegistry;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.Test;
 
 class ExtendedItemRegistryTests extends MockBukkitTestBase {
     @Test
-    void persistentIdsAreUnique() {
-        Set<String> persistentIds = new HashSet<>();
-
-        Arrays.stream(ExtendedItemId.values()).forEach(id ->
-            assertTrue(
-                persistentIds.add(id.persistentId()),
-                () -> "Duplicate persistent ID: " + id.persistentId()));
-    }
-
-    @Test
-    void duplicateEnumRegistrationIsRejected() {
-        ExtendedItemDefinition first = definition(1);
-        ExtendedItemDefinition second = definition(2);
+    void itemIdRequiresPersistentId() {
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> new ExtendedItemId(null));
 
         assertThrows(
             IllegalArgumentException.class,
-            () -> new ExtendedItemRegistry(List.of(first, second)));
+            () -> new ExtendedItemId(""));
+
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> new ExtendedItemId("   "));
+    }
+
+    @Test
+    void itemIdsUsePersistentValueEquality() {
+        ExtendedItemId first =
+            new ExtendedItemId("same_test_id");
+
+        ExtendedItemId second =
+            new ExtendedItemId("same_test_id");
+
+        assertEquals(first, second);
+        assertEquals(
+            first.hashCode(),
+            second.hashCode());
+    }
+
+    @Test
+    void duplicateRegistrationIsRejected() {
+        ExtendedItemDefinition first =
+            definition(
+                TestItems.STANDARD_ID,
+                1);
+
+        ExtendedItemDefinition second =
+            definition(
+                new ExtendedItemId(
+                    TestItems.STANDARD_ID.persistentId()),
+                2);
+
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> new ExtendedItemRegistry(
+                List.of(first, second)));
     }
 
     @Test
     void definitionRequiresPositiveVersion() {
         assertThrows(
             IllegalArgumentException.class,
-            () -> definition(0));
+            () -> definition(
+                TestItems.STANDARD_ID,
+                0));
     }
 
     @Test
-    void defaultServiceRegistersEveryEnumValue() {
-        for (ExtendedItemId id : ExtendedItemId.values()) {
-            ItemStack item = ExtendedItems.create(id);
-            assertEquals(id, ExtendedItems.getId(item).orElseThrow());
-        }
+    void emptyRegistryIsValid() {
+        ExtendedItemRegistry registry =
+            new ExtendedItemRegistry(List.of());
+
+        assertTrue(
+            registry.definitions().isEmpty());
     }
 
-    private static ExtendedItemDefinition definition(int version) {
+    @Test
+    void productionFacadeHasNoReleasedItemDefinitionsYet() {
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> ExtendedItems.create(
+                TestItems.UNREGISTERED_ID));
+
+        assertTrue(
+            ExtendedItems
+                .getId(TestItems.createStandard())
+                .isEmpty());
+
+        assertEquals(
+            ExtendedItemValidationStatus.UNKNOWN_ITEM,
+            ExtendedItems
+                .validate(TestItems.createStandard())
+                .status());
+    }
+
+    private static ExtendedItemDefinition definition(
+        ExtendedItemId id,
+        int version)
+    {
         return new ExtendedItemDefinition(
-            ExtendedItemId.CONSECRATED_KEYSTONE,
+            id,
             version,
             Material.ECHO_SHARD,
             Component.text("Test"),

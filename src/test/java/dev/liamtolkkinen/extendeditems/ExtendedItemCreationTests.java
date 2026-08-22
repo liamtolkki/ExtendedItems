@@ -2,6 +2,7 @@ package dev.liamtolkkinen.extendeditems;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import dev.liamtolkkinen.extendeditems.internal.ExtendedItemKeys;
 import java.util.List;
@@ -14,30 +15,55 @@ import org.junit.jupiter.api.Test;
 
 class ExtendedItemCreationTests extends MockBukkitTestBase {
     @Test
-    void consecratedKeystoneHasExpectedMaterialAndMetadata() {
-        ItemStack item = ExtendedItems.create(ExtendedItemId.CONSECRATED_KEYSTONE);
+    void registeredItemHasExpectedMaterialAndMetadata() {
+        ItemStack item = TestItems.createStandard();
         ItemMeta meta = item.getItemMeta();
 
-        assertEquals(Material.ECHO_SHARD, item.getType());
-        assertEquals("sanctuary_consecrated_keystone", meta.getPersistentDataContainer().get(
-            ExtendedItemKeys.ID,
-            PersistentDataType.STRING));
-        assertEquals(1, meta.getPersistentDataContainer().get(
-            ExtendedItemKeys.VERSION,
-            PersistentDataType.INTEGER));
+        assertEquals(
+            Material.ECHO_SHARD,
+            item.getType());
+
+        assertEquals(
+            "test_standard_item",
+            meta.getPersistentDataContainer().get(
+                ExtendedItemKeys.ID,
+                PersistentDataType.STRING));
+
+        assertEquals(
+            1,
+            meta.getPersistentDataContainer().get(
+                ExtendedItemKeys.VERSION,
+                PersistentDataType.INTEGER));
     }
 
     @Test
-    void consecratedKeystoneHasExpectedDisplayMetadata() {
-        ItemStack item = ExtendedItems.create(ExtendedItemId.CONSECRATED_KEYSTONE);
+    void registeredItemHasExpectedDisplayMetadata() {
+        ItemStack item = TestItems.createStandard();
         ItemMeta meta = item.getItemMeta();
 
-        assertEquals(Component.text("Consecrated Keystone"), meta.displayName());
+        assertEquals(
+            Component.text("Test Artifact"),
+            meta.displayName());
+
         assertEquals(
             List.of(
-                Component.text("A divine artifact used to"),
-                Component.text("strengthen a Sanctuary.")),
+                Component.text("Test lore line one."),
+                Component.text("Test lore line two.")),
             meta.lore());
-        assertFalse(meta.hasEnchantmentGlintOverride());
+
+        assertFalse(
+            meta.hasEnchantmentGlintOverride());
+    }
+
+    @Test
+    void definitionCanEnableGlint() {
+        ItemStack item = TestItems.createGlowing();
+        ItemMeta meta = item.getItemMeta();
+
+        assertTrue(
+            meta.hasEnchantmentGlintOverride());
+
+        assertTrue(
+            meta.getEnchantmentGlintOverride());
     }
 }

@@ -4,7 +4,6 @@ import dev.liamtolkkinen.extendeditems.ExtendedItemDefinition;
 import dev.liamtolkkinen.extendeditems.ExtendedItemId;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -20,8 +19,7 @@ public final class ExtendedItemRegistry {
     public ExtendedItemRegistry(Collection<ExtendedItemDefinition> definitions) {
         Objects.requireNonNull(definitions, "definitions");
 
-        Map<ExtendedItemId, ExtendedItemDefinition> definitionsById =
-            new EnumMap<>(ExtendedItemId.class);
+        Map<ExtendedItemId, ExtendedItemDefinition> definitionsById = new HashMap<>();
         Map<String, ExtendedItemDefinition> definitionsByPersistentId = new HashMap<>();
 
         for (ExtendedItemDefinition definition : definitions) {
@@ -50,7 +48,8 @@ public final class ExtendedItemRegistry {
 
         ExtendedItemDefinition definition = byId.get(id);
         if (definition == null) {
-            throw new IllegalArgumentException("No ExtendedItems definition registered for " + id);
+            throw new IllegalArgumentException(
+                "No ExtendedItems definition registered for " + id.persistentId());
         }
 
         return definition;

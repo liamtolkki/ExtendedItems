@@ -1,10 +1,15 @@
 plugins {
     `java-library`
-    `maven-publish`
 }
 
 group = "dev.liamtolkkinen"
-version = "0.1.0-SNAPSHOT"
+version = providers.gradleProperty("releaseVersion")
+    .orElse("0.1.0-SNAPSHOT")
+    .get()
+
+base {
+    archivesName = "extendeditems"
+}
 
 repositories {
     mavenCentral()
@@ -19,24 +24,18 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(25)
     }
-
-    withSourcesJar()
-    withJavadocJar()
 }
 
 dependencies {
-    // ExtendedItems compiles against Paper, but consuming plugins provide
-    // Paper at runtime.
+    // Paper is supplied by the consuming Paper plugin/server at runtime.
     compileOnly("io.papermc.paper:paper-api:26.1.2.build.+")
 
-    // Tests directly use Bukkit/Paper/Adventure types.
+    // Tests directly use Paper/Bukkit/Adventure types.
     testImplementation("io.papermc.paper:paper-api:26.1.2.build.+")
 
-    // JUnit
     testImplementation("org.junit.jupiter:junit-jupiter:6.1.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.1.0")
 
-    // Paper test environment
     testImplementation(
         "org.mockbukkit.mockbukkit:mockbukkit-v26.1.2:4.114.0"
     )
@@ -45,10 +44,6 @@ dependencies {
 tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
     options.release = 25
-}
-
-tasks.withType<Javadoc>().configureEach {
-    options.encoding = "UTF-8"
 }
 
 tasks.test {
@@ -61,15 +56,6 @@ tasks.jar {
             "Implementation-Title" to project.name,
             "Implementation-Version" to project.version
         )
-    }
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("mavenJava") {
-            from(components["java"])
-            artifactId = "extendeditems"
-        }
     }
 }
 

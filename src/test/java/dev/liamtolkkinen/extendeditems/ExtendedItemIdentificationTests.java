@@ -9,56 +9,109 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.junit.jupiter.api.Test;
 
-class ExtendedItemIdentificationTests extends MockBukkitTestBase {
+class ExtendedItemIdentificationTests
+    extends MockBukkitTestBase
+{
     @Test
     void validItemResolvesToCorrectId() {
-        ItemStack item = ExtendedItems.create(ExtendedItemId.CONSECRATED_KEYSTONE);
+        ItemStack item = TestItems.createStandard();
 
-        assertTrue(ExtendedItems.is(item, ExtendedItemId.CONSECRATED_KEYSTONE));
-        assertTrue(ExtendedItems.getId(item).filter(ExtendedItemId.CONSECRATED_KEYSTONE::equals).isPresent());
+        assertTrue(
+            TestItems.SERVICE.is(
+                item,
+                TestItems.STANDARD_ID));
+
+        assertTrue(
+            TestItems.SERVICE
+                .getId(item)
+                .filter(TestItems.STANDARD_ID::equals)
+                .isPresent());
+
+        assertFalse(
+            TestItems.SERVICE.is(
+                item,
+                TestItems.GLOWING_ID));
     }
 
     @Test
     void vanillaItemDoesNotResolveAsCustomItem() {
-        ItemStack vanillaItem = new ItemStack(Material.ECHO_SHARD);
+        ItemStack vanillaItem =
+            new ItemStack(Material.ECHO_SHARD);
 
-        assertFalse(ExtendedItems.is(vanillaItem, ExtendedItemId.CONSECRATED_KEYSTONE));
-        assertTrue(ExtendedItems.getId(vanillaItem).isEmpty());
+        assertFalse(
+            TestItems.SERVICE.is(
+                vanillaItem,
+                TestItems.STANDARD_ID));
+
+        assertTrue(
+            TestItems.SERVICE
+                .getId(vanillaItem)
+                .isEmpty());
     }
 
     @Test
     void unknownPersistentIdDoesNotResolve() {
-        ItemStack item = new ItemStack(Material.ECHO_SHARD);
-        item.editMeta(meta -> meta.getPersistentDataContainer().set(
-            ExtendedItemKeys.ID,
-            PersistentDataType.STRING,
-            "future_unknown_item"));
+        ItemStack item =
+            new ItemStack(Material.ECHO_SHARD);
 
-        assertTrue(ExtendedItems.getId(item).isEmpty());
-        assertFalse(ExtendedItems.is(item, ExtendedItemId.CONSECRATED_KEYSTONE));
+        item.editMeta(meta ->
+            meta.getPersistentDataContainer().set(
+                ExtendedItemKeys.ID,
+                PersistentDataType.STRING,
+                "future_unknown_item"));
+
+        assertTrue(
+            TestItems.SERVICE
+                .getId(item)
+                .isEmpty());
+
+        assertFalse(
+            TestItems.SERVICE.is(
+                item,
+                TestItems.STANDARD_ID));
     }
 
     @Test
     void malformedIdTypeDoesNotResolveDuringIdentification() {
-        ItemStack item = new ItemStack(Material.ECHO_SHARD);
-        item.editMeta(meta -> meta.getPersistentDataContainer().set(
-            ExtendedItemKeys.ID,
-            PersistentDataType.INTEGER,
-            123));
+        ItemStack item =
+            new ItemStack(Material.ECHO_SHARD);
 
-        assertTrue(ExtendedItems.getId(item).isEmpty());
-        assertFalse(ExtendedItems.is(item, ExtendedItemId.CONSECRATED_KEYSTONE));
+        item.editMeta(meta ->
+            meta.getPersistentDataContainer().set(
+                ExtendedItemKeys.ID,
+                PersistentDataType.INTEGER,
+                123));
+
+        assertTrue(
+            TestItems.SERVICE
+                .getId(item)
+                .isEmpty());
+
+        assertFalse(
+            TestItems.SERVICE.is(
+                item,
+                TestItems.STANDARD_ID));
     }
 
     @Test
     void identificationRemainsSeparateFromValidation() {
-        ItemStack item = ExtendedItems.create(ExtendedItemId.CONSECRATED_KEYSTONE);
-        item.editMeta(meta -> meta.getPersistentDataContainer().set(
-            ExtendedItemKeys.VERSION,
-            PersistentDataType.INTEGER,
-            999));
+        ItemStack item =
+            TestItems.createStandard();
 
-        assertTrue(ExtendedItems.is(item, ExtendedItemId.CONSECRATED_KEYSTONE));
-        assertFalse(ExtendedItems.validate(item).isValid());
+        item.editMeta(meta ->
+            meta.getPersistentDataContainer().set(
+                ExtendedItemKeys.VERSION,
+                PersistentDataType.INTEGER,
+                999));
+
+        assertTrue(
+            TestItems.SERVICE.is(
+                item,
+                TestItems.STANDARD_ID));
+
+        assertFalse(
+            TestItems.SERVICE
+                .validate(item)
+                .isValid());
     }
 }

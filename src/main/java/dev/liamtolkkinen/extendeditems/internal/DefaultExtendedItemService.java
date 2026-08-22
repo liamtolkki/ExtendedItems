@@ -8,9 +8,6 @@ import dev.liamtolkkinen.extendeditems.ExtendedItemValidationStatus;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -27,19 +24,8 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
     }
 
     public static DefaultExtendedItemService createDefault() {
-        ExtendedItemDefinition consecratedKeystone = new ExtendedItemDefinition(
-            ExtendedItemId.CONSECRATED_KEYSTONE,
-            1,
-            Material.ECHO_SHARD,
-            Component.text("Consecrated Keystone"),
-            List.of(
-                Component.text("A divine artifact used to"),
-                Component.text("strengthen a Sanctuary.")),
-            false,
-            Set.of());
-
-        return new DefaultExtendedItemService(
-            new ExtendedItemRegistry(List.of(consecratedKeystone)));
+        // No gameplay item IDs are released yet.
+        return new DefaultExtendedItemService(new ExtendedItemRegistry(List.of()));
     }
 
     @Override
@@ -73,7 +59,9 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
         }
 
         String persistentId = pdc.get(ExtendedItemKeys.ID, PersistentDataType.STRING);
-        return ExtendedItemId.fromPersistentId(persistentId);
+
+        return registry.findByPersistentId(persistentId)
+            .map(ExtendedItemDefinition::id);
     }
 
     @Override
@@ -121,7 +109,10 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
                 "extendeditems:id exists but is not a STRING.");
         }
 
-        String persistentId = pdc.get(ExtendedItemKeys.ID, PersistentDataType.STRING);
+        String persistentId = pdc.get(
+            ExtendedItemKeys.ID,
+            PersistentDataType.STRING);
+
         if (persistentId == null || persistentId.isBlank()) {
             return result(
                 ExtendedItemValidationStatus.INVALID_FORMAT,
@@ -132,6 +123,7 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
 
         Optional<ExtendedItemDefinition> definitionOptional =
             registry.findByPersistentId(persistentId);
+
         if (definitionOptional.isEmpty()) {
             return result(
                 ExtendedItemValidationStatus.UNKNOWN_ITEM,
@@ -140,7 +132,8 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
                 "Unknown ExtendedItems persistent ID '" + persistentId + "'.");
         }
 
-        ExtendedItemDefinition definition = definitionOptional.get();
+        ExtendedItemDefinition definition =
+            definitionOptional.get();
 
         if (!pdc.has(ExtendedItemKeys.VERSION)) {
             return result(
@@ -150,7 +143,10 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
                 "Missing extendeditems:version metadata.");
         }
 
-        if (!pdc.has(ExtendedItemKeys.VERSION, PersistentDataType.INTEGER)) {
+        if (!pdc.has(
+            ExtendedItemKeys.VERSION,
+            PersistentDataType.INTEGER))
+        {
             return result(
                 ExtendedItemValidationStatus.INVALID_FORMAT,
                 definition.id(),
@@ -158,7 +154,10 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
                 "extendeditems:version exists but is not an INTEGER.");
         }
 
-        Integer version = pdc.get(ExtendedItemKeys.VERSION, PersistentDataType.INTEGER);
+        Integer version = pdc.get(
+            ExtendedItemKeys.VERSION,
+            PersistentDataType.INTEGER);
+
         if (version == null || version <= 0) {
             return result(
                 ExtendedItemValidationStatus.INVALID_FORMAT,
@@ -172,8 +171,13 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
                 ExtendedItemValidationStatus.UNSUPPORTED_VERSION,
                 definition.id(),
                 version,
-                "Unsupported format version " + version + " for " + definition.id()
-                    + "; supported version is " + definition.version() + ".");
+                "Unsupported format version "
+                    + version
+                    + " for "
+                    + definition.id()
+                    + "; supported version is "
+                    + definition.version()
+                    + ".");
         }
 
         if (item.getType() != definition.material()) {
@@ -181,7 +185,11 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
                 ExtendedItemValidationStatus.INVALID_MATERIAL,
                 definition.id(),
                 version,
-                "Expected material " + definition.material() + " but found " + item.getType() + ".");
+                "Expected material "
+                    + definition.material()
+                    + " but found "
+                    + item.getType()
+                    + ".");
         }
 
         return result(
@@ -195,20 +203,31 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
         return registry;
     }
 
-    private static Integer readVersionIfInteger(PersistentDataContainer pdc) {
-        if (!pdc.has(ExtendedItemKeys.VERSION, PersistentDataType.INTEGER)) {
+    private static Integer readVersionIfInteger(
+        PersistentDataContainer pdc)
+    {
+        if (!pdc.has(
+            ExtendedItemKeys.VERSION,
+            PersistentDataType.INTEGER))
+        {
             return null;
         }
 
-        return pdc.get(ExtendedItemKeys.VERSION, PersistentDataType.INTEGER);
+        return pdc.get(
+            ExtendedItemKeys.VERSION,
+            PersistentDataType.INTEGER);
     }
 
     private static ExtendedItemValidationResult result(
         ExtendedItemValidationStatus status,
         ExtendedItemId itemId,
         Integer foundVersion,
-        String detail
-    ) {
-        return ExtendedItemValidationResult.of(status, itemId, foundVersion, detail);
+        String detail)
+    {
+        return ExtendedItemValidationResult.of(
+            status,
+            itemId,
+            foundVersion,
+            detail);
     }
 }

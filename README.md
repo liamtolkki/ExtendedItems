@@ -15,28 +15,27 @@ Gameplay plugins own their own state and rules. ExtendedItems only owns shared i
 
 ## Current status
 
-This repository is pre-1.0 and starts with the first cross-plugin artifact required by the implementation plan:
+This repository is pre-1.0.
+
+The ExtendedItems framework is implemented, but there are currently no released gameplay item IDs.
+
+That is intentional. Item identities will be added only when an actual quest, recipe, Sanctuary progression requirement, or other cross-plugin gameplay feature defines a real item that must persist across plugin boundaries.
+
+The production catalog is therefore currently empty:
 
 ```text
-CONSECRATED_KEYSTONE
-persistent ID: sanctuary_consecrated_keystone
-format version: 1
+ExtendedItemIds
+    no released IDs yet
 ```
 
-The remaining planned item IDs are intentionally not registered yet. Their names and purposes were marked provisional in the implementation plan and should be locked before they become persistent contracts.
-
-The Consecrated Keystone currently uses `Material.ECHO_SHARD`. This is a pre-1.0 implementation choice based on the Echo Shard example in the implementation plan and can still be changed before the first stable release.
-
-No glint is enabled for the Keystone yet. Glint support exists in the item definition model, but the implementation plan does not specify that this item should use it.
+Automated tests use test-only item IDs and definitions. Those test IDs exist only under `src/test` and are not included in the production JAR.
 
 ## Requirements
 
 - JDK 25
-- Gradle 9.7.1 or newer compatible Gradle 9.x
+- Gradle Wrapper 9.7.1
 - IntelliJ IDEA recommended
 - Paper API 26.1.2
-
-Paper 26.1+ requires Java 25.
 
 ## Project structure
 
@@ -47,7 +46,6 @@ ExtendedItems/
 │       └── build.yml
 ├── gradle/
 │   └── wrapper/
-│       └── gradle-wrapper.properties
 ├── src/
 │   ├── main/
 │   │   └── java/
@@ -55,6 +53,7 @@ ExtendedItems/
 │   │           ├── ExtendedItems.java
 │   │           ├── ExtendedItemDefinition.java
 │   │           ├── ExtendedItemId.java
+│   │           ├── ExtendedItemIds.java
 │   │           ├── ExtendedItemService.java
 │   │           ├── ExtendedItemValidationResult.java
 │   │           ├── ExtendedItemValidationStatus.java
@@ -66,6 +65,13 @@ ExtendedItems/
 │   └── test/
 │       └── java/
 │           └── dev/liamtolkkinen/extendeditems/
+│               ├── ExtendedItemCreationTests.java
+│               ├── ExtendedItemIdentificationTests.java
+│               ├── ExtendedItemRegistryTests.java
+│               ├── ExtendedItemValidationTests.java
+│               ├── MetadataCoexistenceTests.java
+│               ├── MockBukkitTestBase.java
+│               └── TestItems.java
 ├── bootstrap-gradle-wrapper.ps1
 ├── build.gradle.kts
 ├── gradle.properties
@@ -78,64 +84,53 @@ ExtendedItems/
 1. Install JDK 25.
 2. Open the repository folder in IntelliJ IDEA.
 3. Import it as a Gradle project when prompted.
-4. Set the Gradle JVM to JDK 25.
-5. Let IntelliJ sync dependencies.
-6. Run the Gradle `test` or `build` task.
+4. Set the Project SDK to JDK 25.
+5. Set the Gradle JVM to JDK 25.
+6. Let IntelliJ sync dependencies.
+7. Run the Gradle `test` or `build` task.
 
 The project uses the Gradle Kotlin DSL.
 
 ## Gradle wrapper
 
-`gradle-wrapper.properties` is included and pins Gradle 9.7.1.
+The repository uses the committed Gradle Wrapper and pins Gradle 9.7.1.
 
-The source package in this repository also includes `bootstrap-gradle-wrapper.ps1`. Run it once from PowerShell if the generated wrapper JAR and launch scripts are not present yet:
-
-```powershell
-.\bootstrap-gradle-wrapper.ps1
-```
-
-The bootstrap script downloads Gradle 9.7.1 to a temporary directory, runs the official `wrapper` task, and removes the temporary distribution. It generates:
-
-```text
-gradle/wrapper/gradle-wrapper.jar
-gradlew
-gradlew.bat
-```
-
-Commit those generated wrapper files. After that, normal development should use:
+Normal development should use:
 
 ```powershell
 .\gradlew.bat build
 ```
 
-If Gradle 9.7.1 is already installed globally, you can generate the same files directly with:
-
-```powershell
-gradle wrapper --gradle-version 9.7.1 --distribution-type bin
-```
+`bootstrap-gradle-wrapper.ps1` is retained only for reconstructing the wrapper files if they are missing from a fresh repository setup.
 
 ## Public API
 
-The simplest API is the static `ExtendedItems` facade.
+The static `ExtendedItems` facade is the default public entry point.
 
-### Create an item
+### Create a registered item
+
+Once an item has been released into `ExtendedItemIds`, consuming code will use the registered ID:
 
 ```java
 ItemStack item = ExtendedItems.create(
-    ExtendedItemId.CONSECRATED_KEYSTONE);
+    ExtendedItemIds.SOME_RELEASED_ITEM);
 ```
+
+There are no production IDs yet, so this is intentionally not usable until the first real item contract is added.
 
 ### Identify an item
 
 ```java
-boolean isKeystone = ExtendedItems.is(
+boolean matches = ExtendedItems.is(
     item,
-    ExtendedItemId.CONSECRATED_KEYSTONE);
+    ExtendedItemIds.SOME_RELEASED_ITEM);
 ```
 
 ```java
 Optional<ExtendedItemId> id = ExtendedItems.getId(item);
 ```
+
+Identification only resolves IDs registered by this version of ExtendedItems. Arbitrary PDC strings do not become recognized items.
 
 Identification and validation are intentionally separate. A malformed item can still contain a recognized ID.
 
@@ -149,7 +144,7 @@ if (!result.isValid()) {
 }
 ```
 
-Current validation statuses are:
+Validation statuses are:
 
 ```text
 VALID
@@ -172,13 +167,6 @@ extendeditems:version INTEGER
 
 The namespace and key meanings are compatibility-sensitive.
 
-For a Consecrated Keystone:
-
-```text
-extendeditems:id = sanctuary_consecrated_keystone
-extendeditems:version = 1
-```
-
 Do not identify ExtendedItems items from only:
 
 - Material
@@ -192,10 +180,10 @@ PDC metadata is authoritative for identity.
 
 ExtendedItems does not own gameplay instance state.
 
-A future Sanctuary-owned anchor can contain both ExtendedItems metadata and Sanctuary metadata:
+A future Sanctuary-owned anchor may contain both ExtendedItems metadata and Sanctuary metadata:
 
 ```text
-extendeditems:id = sanctuary_beacon
+extendeditems:id = <released anchor ID>
 extendeditems:version = 1
 
 sanctuary:anchor_id = <UUID>
@@ -203,34 +191,39 @@ sanctuary:owner_uuid = <UUID>
 sanctuary:tier = 2
 ```
 
-ExtendedItems should only interpret the `extendeditems` fields.
+ExtendedItems interprets only the `extendeditems` fields.
 
-## Adding a new shared item
+## Adding the first real shared item
 
-Before adding a new item, lock its persistent ID. Do not ship placeholder IDs into real inventories.
+Do not add an item until its gameplay purpose is real enough to lock the persistent identity.
 
-Then:
+When that happens:
 
-1. Add the enum value and explicit persistent string to `ExtendedItemId`.
+1. Add a public constant to `ExtendedItemIds` using a stable persistent string.
 2. Add exactly one `ExtendedItemDefinition` to the default registry in `DefaultExtendedItemService`.
 3. Set a positive format version.
 4. Define its Material and presentation metadata.
 5. Add creation tests.
 6. Add identification tests.
 7. Add validation tests.
-8. Verify the registry compatibility tests still pass.
+8. Verify consumer-plugin metadata still coexists with ExtendedItems metadata.
+9. Build and test locally.
+10. Let GitHub CI build and test the committed change.
 
-Once a persistent ID is released, do not rename it casually even if the Java enum name changes later.
+Once a persistent ID is released into real inventories, do not rename it casually.
 
 ## Tests
 
 Tests use JUnit and MockBukkit.
 
-The test suite covers:
+The test suite currently uses test-only definitions to verify the framework without publishing placeholder gameplay IDs.
 
-- Registered item creation
+Coverage includes:
+
+- Item creation
 - Material and display metadata
 - Persistent ID and version metadata
+- Glint handling
 - Vanilla-item rejection
 - Unknown IDs
 - Identification vs validation separation
@@ -238,8 +231,8 @@ The test suite covers:
 - Unsupported versions
 - Invalid material
 - Invalid PDC data types
-- Persistent ID uniqueness
-- Registry completeness
+- Registry duplicate rejection
+- Empty production registry support
 - Consumer-plugin metadata coexistence
 
 Run:
@@ -248,60 +241,95 @@ Run:
 .\gradlew.bat test
 ```
 
-or, before the wrapper scripts are generated:
+For a full clean build:
 
 ```powershell
-gradle test
+.\gradlew.bat clean build
 ```
 
 ## Build output
 
-Run:
-
-```powershell
-.\gradlew.bat build
-```
-
-The main library JAR is written under:
+Normal development builds use:
 
 ```text
-build/libs/
+0.1.0-SNAPSHOT
+```
+
+The main library JAR is written as:
+
+```text
+build/libs/extendeditems-0.1.0-SNAPSHOT.jar
 ```
 
 ExtendedItems is a library JAR. Do not copy it directly into the Paper server's `plugins` folder.
 
-## Consuming from God or Sanctuary
+## GitHub CI
 
-During local development, a consuming plugin may use a Maven-local publication:
+`.github/workflows/build.yml` runs for pushes, pull requests, and tags beginning with `v`.
 
-```powershell
-.\gradlew.bat publishToMavenLocal
-```
-
-Then the consuming plugin can resolve:
-
-```text
-dev.liamtolkkinen:extendeditems:0.1.0-SNAPSHOT
-```
-
-The consuming plugin should shade and relocate ExtendedItems into its final plugin JAR.
-
-Persistent PDC metadata, not Java object identity, is the cross-plugin contract. This means God and Sanctuary can safely carry separate shaded copies as long as both understand the same released item format.
-
-A GitHub Packages publication can be added once the final repository owner and package distribution policy are locked.
-
-## CI
-
-`.github/workflows/build.yml` runs on pushes and pull requests.
-
-It:
+For a normal push or pull request it:
 
 1. Sets up Java 25.
-2. Sets up Gradle 9.7.1.
-3. Runs `gradle build`.
-4. Uploads the built library JAR as a workflow artifact.
+2. Uses the committed Gradle Wrapper.
+3. Runs a clean build and all tests.
+4. Uploads the snapshot JAR as a workflow artifact.
 
-The workflow intentionally does not publish a Maven package yet.
+This is validation only. It does not create a GitHub Release.
+
+## GitHub Releases
+
+A version tag publishes an authoritative release JAR.
+
+Example:
+
+```powershell
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+The CI workflow then:
+
+```text
+v0.1.0 tag
+    ↓
+build with version 0.1.0
+    ↓
+run tests
+    ↓
+create extendeditems-0.1.0.jar
+    ↓
+create GitHub Release v0.1.0
+    ↓
+attach extendeditems-0.1.0.jar
+```
+
+Do not create a release tag merely because the framework builds. A tag should be created when there is a version of ExtendedItems that another repository should be able to depend on reproducibly.
+
+God, Sanctuary, and future consumers can later be configured to download a specific release JAR automatically during their builds. They should pin a specific version rather than pulling an unspecified latest build.
+
+## Consuming from God or Sanctuary
+
+The intended distribution model is GitHub Releases, not GitHub Packages.
+
+A consuming repository will eventually declare the ExtendedItems version it needs, download the corresponding release JAR automatically, compile against it, and shade/relocate it into its own plugin JAR.
+
+Conceptually:
+
+```text
+God or Sanctuary build
+    ↓
+read required ExtendedItems version
+    ↓
+download that version from the ExtendedItems GitHub Release
+    ↓
+compile against ExtendedItems
+    ↓
+shade/relocate ExtendedItems into the plugin JAR
+```
+
+Persistent PDC metadata, not Java object identity, is the cross-plugin contract. God and Sanctuary can therefore carry separate shaded copies as long as both understand the same released item format.
+
+The exact download task belongs in the consuming repository and should be added when the first consumer actually needs ExtendedItems.
 
 ## Ownership boundaries
 

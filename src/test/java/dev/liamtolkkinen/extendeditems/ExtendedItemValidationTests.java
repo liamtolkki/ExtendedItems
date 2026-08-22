@@ -10,109 +10,168 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.junit.jupiter.api.Test;
 
-class ExtendedItemValidationTests extends MockBukkitTestBase {
+class ExtendedItemValidationTests
+    extends MockBukkitTestBase
+{
     @Test
     void validItemPassesValidation() {
-        ExtendedItemValidationResult result = ExtendedItems.validate(
-            ExtendedItems.create(ExtendedItemId.CONSECRATED_KEYSTONE));
+        ExtendedItemValidationResult result =
+            TestItems.SERVICE.validate(
+                TestItems.createStandard());
 
         assertTrue(result.isValid());
-        assertEquals(ExtendedItemValidationStatus.VALID, result.status());
-        assertEquals(ExtendedItemId.CONSECRATED_KEYSTONE, result.itemId().orElseThrow());
-        assertEquals(1, result.foundVersion().orElseThrow());
+
+        assertEquals(
+            ExtendedItemValidationStatus.VALID,
+            result.status());
+
+        assertEquals(
+            TestItems.STANDARD_ID,
+            result.itemId().orElseThrow());
+
+        assertEquals(
+            1,
+            result.foundVersion().orElseThrow());
     }
 
     @Test
     void missingIdIsRejected() {
-        ExtendedItemValidationResult result = ExtendedItems.validate(
-            new ItemStack(Material.ECHO_SHARD));
+        ExtendedItemValidationResult result =
+            TestItems.SERVICE.validate(
+                new ItemStack(Material.ECHO_SHARD));
 
-        assertEquals(ExtendedItemValidationStatus.MISSING_ID, result.status());
+        assertEquals(
+            ExtendedItemValidationStatus.MISSING_ID,
+            result.status());
     }
 
     @Test
     void unknownIdIsRejected() {
-        ItemStack item = new ItemStack(Material.ECHO_SHARD);
+        ItemStack item =
+            new ItemStack(Material.ECHO_SHARD);
+
         item.editMeta(meta -> {
             meta.getPersistentDataContainer().set(
                 ExtendedItemKeys.ID,
                 PersistentDataType.STRING,
                 "future_unknown_item");
+
             meta.getPersistentDataContainer().set(
                 ExtendedItemKeys.VERSION,
                 PersistentDataType.INTEGER,
                 1);
         });
 
-        ExtendedItemValidationResult result = ExtendedItems.validate(item);
+        ExtendedItemValidationResult result =
+            TestItems.SERVICE.validate(item);
 
-        assertEquals(ExtendedItemValidationStatus.UNKNOWN_ITEM, result.status());
+        assertEquals(
+            ExtendedItemValidationStatus.UNKNOWN_ITEM,
+            result.status());
     }
 
     @Test
     void missingVersionIsRejected() {
-        ItemStack item = ExtendedItems.create(ExtendedItemId.CONSECRATED_KEYSTONE);
-        item.editMeta(meta -> meta.getPersistentDataContainer().remove(ExtendedItemKeys.VERSION));
+        ItemStack item =
+            TestItems.createStandard();
 
-        ExtendedItemValidationResult result = ExtendedItems.validate(item);
+        item.editMeta(meta ->
+            meta.getPersistentDataContainer().remove(
+                ExtendedItemKeys.VERSION));
 
-        assertEquals(ExtendedItemValidationStatus.MISSING_VERSION, result.status());
+        ExtendedItemValidationResult result =
+            TestItems.SERVICE.validate(item);
+
+        assertEquals(
+            ExtendedItemValidationStatus.MISSING_VERSION,
+            result.status());
     }
 
     @Test
     void unsupportedVersionIsRejected() {
-        ItemStack item = ExtendedItems.create(ExtendedItemId.CONSECRATED_KEYSTONE);
-        item.editMeta(meta -> meta.getPersistentDataContainer().set(
-            ExtendedItemKeys.VERSION,
-            PersistentDataType.INTEGER,
-            999));
+        ItemStack item =
+            TestItems.createStandard();
 
-        ExtendedItemValidationResult result = ExtendedItems.validate(item);
+        item.editMeta(meta ->
+            meta.getPersistentDataContainer().set(
+                ExtendedItemKeys.VERSION,
+                PersistentDataType.INTEGER,
+                999));
 
-        assertEquals(ExtendedItemValidationStatus.UNSUPPORTED_VERSION, result.status());
-        assertEquals(999, result.foundVersion().orElseThrow());
+        ExtendedItemValidationResult result =
+            TestItems.SERVICE.validate(item);
+
+        assertEquals(
+            ExtendedItemValidationStatus.UNSUPPORTED_VERSION,
+            result.status());
+
+        assertEquals(
+            999,
+            result.foundVersion().orElseThrow());
     }
 
     @Test
     void invalidMaterialIsRejected() {
-        ItemStack item = ExtendedItems.create(ExtendedItemId.CONSECRATED_KEYSTONE);
-        item.setType(Material.DIRT);
+        ItemStack source =
+            TestItems.createStandard();
 
-        ExtendedItemValidationResult result = ExtendedItems.validate(item);
+        ItemStack item =
+            new ItemStack(Material.DIRT);
 
-        assertEquals(ExtendedItemValidationStatus.INVALID_MATERIAL, result.status());
+        item.setItemMeta(
+            source.getItemMeta());
+
+        ExtendedItemValidationResult result =
+            TestItems.SERVICE.validate(item);
+
+        assertEquals(
+            ExtendedItemValidationStatus.INVALID_MATERIAL,
+            result.status());
     }
 
     @Test
     void malformedIdTypeIsRejectedAsInvalidFormat() {
-        ItemStack item = new ItemStack(Material.ECHO_SHARD);
+        ItemStack item =
+            new ItemStack(Material.ECHO_SHARD);
+
         item.editMeta(meta -> {
             meta.getPersistentDataContainer().set(
                 ExtendedItemKeys.ID,
                 PersistentDataType.INTEGER,
                 123);
+
             meta.getPersistentDataContainer().set(
                 ExtendedItemKeys.VERSION,
                 PersistentDataType.INTEGER,
                 1);
         });
 
-        ExtendedItemValidationResult result = ExtendedItems.validate(item);
+        ExtendedItemValidationResult result =
+            TestItems.SERVICE.validate(item);
 
         assertFalse(result.isValid());
-        assertEquals(ExtendedItemValidationStatus.INVALID_FORMAT, result.status());
+
+        assertEquals(
+            ExtendedItemValidationStatus.INVALID_FORMAT,
+            result.status());
     }
 
     @Test
     void malformedVersionTypeIsRejectedAsInvalidFormat() {
-        ItemStack item = ExtendedItems.create(ExtendedItemId.CONSECRATED_KEYSTONE);
-        item.editMeta(meta -> meta.getPersistentDataContainer().set(
-            ExtendedItemKeys.VERSION,
-            PersistentDataType.STRING,
-            "one"));
+        ItemStack item =
+            TestItems.createStandard();
 
-        ExtendedItemValidationResult result = ExtendedItems.validate(item);
+        item.editMeta(meta ->
+            meta.getPersistentDataContainer().set(
+                ExtendedItemKeys.VERSION,
+                PersistentDataType.STRING,
+                "one"));
 
-        assertEquals(ExtendedItemValidationStatus.INVALID_FORMAT, result.status());
+        ExtendedItemValidationResult result =
+            TestItems.SERVICE.validate(item);
+
+        assertEquals(
+            ExtendedItemValidationStatus.INVALID_FORMAT,
+            result.status());
     }
 }
