@@ -211,7 +211,7 @@ class ExtendedItemCatalogTests
                 Material.PRISMARINE_BRICK_SLAB),
 
             /*
-             * Land companions
+             * Matching companions
              */
 
             expected(
@@ -279,10 +279,6 @@ class ExtendedItemCatalogTests
                 "companion_wither",
                 "Wither Companion",
                 Material.WITHER_SPAWN_EGG),
-
-            /*
-             * Aquatic companions
-             */
 
             expected(
                 ExtendedItemIds.COMPANION_DROWNED,
