@@ -15,20 +15,34 @@ Gameplay plugins own their own state and rules. ExtendedItems only owns shared i
 
 ## Current status
 
-This repository is pre-1.0.
+ExtendedItems is currently an alpha library.
 
-The ExtendedItems framework is implemented, but there are currently no released gameplay item IDs.
-
-That is intentional. Item identities will be added only when an actual quest, recipe, Sanctuary progression requirement, or other cross-plugin gameplay feature defines a real item that must persist across plugin boundaries.
-
-The production catalog is therefore currently empty:
+The first released item catalog contains the guard-related item identities required by Sanctuary:
 
 ```text
-ExtendedItemIds
-    no released IDs yet
+14 sentry IDs
+14 matching companion IDs
+2 additional companion IDs
+30 total guard-related IDs
 ```
 
-Automated tests use test-only item IDs and definitions. Those test IDs exist only under `src/test` and are not included in the production JAR.
+These persistent IDs are now part of the ExtendedItems compatibility contract.
+
+The alpha release does not imply that Sanctuary must make every item obtainable or implement gameplay for every companion. ExtendedItems only establishes what each item is.
+
+For example:
+
+```text
+ExtendedItems:
+"This is a Warden Companion item."
+
+Sanctuary:
+"Is Warden Companion gameplay enabled?
+Can this player use it?
+What stats does it have?
+How is it spawned?
+Does it permanently die?"
+```
 
 ## Requirements
 
@@ -36,6 +50,132 @@ Automated tests use test-only item IDs and definitions. Those test IDs exist onl
 - Gradle Wrapper 9.7.1
 - IntelliJ IDEA recommended
 - Paper API 26.1.2
+
+## Guard item rules
+
+### Sentries
+
+Sentry items use:
+
+```text
+themed post block + glint
+```
+
+Most sentry posts use slabs.
+
+The Warden is the intentional exception and uses:
+
+```text
+SCULK_SENSOR
+```
+
+This preserves a low-profile post shape while making the Warden visibly distinct as a high-tier sentry.
+
+### Companions
+
+Companion items use:
+
+```text
+matching mob spawn egg + glint
+```
+
+This makes the intended mob immediately recognizable while distinguishing the item from an ordinary spawn egg.
+
+Every mob with a sentry ID also has a matching companion ID.
+
+Whether a companion is actually obtainable or enabled is a Sanctuary gameplay decision.
+
+### Lore
+
+The initial alpha guard definitions do not add shared lore.
+
+ExtendedItems currently owns:
+
+- Persistent ID
+- Format version
+- Material
+- Display name
+- Glint
+
+Lore can be added later when wording is intentionally defined as part of the shared presentation contract.
+
+## Guard item catalog
+
+### Land sentries
+
+| Persistent ID | Display Name | Material |
+| --- | --- | --- |
+| `sentry_iron_golem` | Iron Golem Sentry Post | `SMOOTH_STONE_SLAB` |
+| `sentry_pillager` | Pillager Sentry Post | `DARK_OAK_SLAB` |
+| `sentry_skeleton` | Skeleton Sentry Post | `QUARTZ_SLAB` |
+| `sentry_piglin_brute` | Piglin Brute Sentry Post | `BLACKSTONE_SLAB` |
+| `sentry_enderman` | Enderman Sentry Post | `PURPUR_SLAB` |
+| `sentry_evoker` | Evoker Sentry Post | `STONE_BRICK_SLAB` |
+| `sentry_baby_zombie` | Baby Zombie Sentry Post | `MOSSY_COBBLESTONE_SLAB` |
+| `sentry_blaze` | Blaze Sentry Post | `NETHER_BRICK_SLAB` |
+| `sentry_warden` | Warden Sentry Post | `SCULK_SENSOR` |
+| `sentry_creaking` | Creaking Sentry Post | `PALE_OAK_SLAB` |
+| `sentry_wither` | Wither Sentry Post | `POLISHED_BLACKSTONE_SLAB` |
+
+### Aquatic sentries
+
+| Persistent ID | Display Name | Material |
+| --- | --- | --- |
+| `sentry_drowned` | Drowned Sentry Post | `PRISMARINE_SLAB` |
+| `sentry_guardian` | Guardian Sentry Post | `DARK_PRISMARINE_SLAB` |
+| `sentry_elder_guardian` | Elder Guardian Sentry Post | `PRISMARINE_BRICK_SLAB` |
+
+### Matching companions
+
+| Persistent ID | Display Name | Material |
+| --- | --- | --- |
+| `companion_iron_golem` | Iron Golem Companion | `IRON_GOLEM_SPAWN_EGG` |
+| `companion_pillager` | Pillager Companion | `PILLAGER_SPAWN_EGG` |
+| `companion_skeleton` | Skeleton Companion | `SKELETON_SPAWN_EGG` |
+| `companion_piglin_brute` | Piglin Brute Companion | `PIGLIN_BRUTE_SPAWN_EGG` |
+| `companion_enderman` | Enderman Companion | `ENDERMAN_SPAWN_EGG` |
+| `companion_evoker` | Evoker Companion | `EVOKER_SPAWN_EGG` |
+| `companion_baby_zombie` | Baby Zombie Companion | `ZOMBIE_SPAWN_EGG` |
+| `companion_blaze` | Blaze Companion | `BLAZE_SPAWN_EGG` |
+| `companion_warden` | Warden Companion | `WARDEN_SPAWN_EGG` |
+| `companion_creaking` | Creaking Companion | `CREAKING_SPAWN_EGG` |
+| `companion_wither` | Wither Companion | `WITHER_SPAWN_EGG` |
+| `companion_drowned` | Drowned Companion | `DROWNED_SPAWN_EGG` |
+| `companion_guardian` | Guardian Companion | `GUARDIAN_SPAWN_EGG` |
+| `companion_elder_guardian` | Elder Guardian Companion | `ELDER_GUARDIAN_SPAWN_EGG` |
+
+`companion_baby_zombie` intentionally uses `ZOMBIE_SPAWN_EGG`. Sanctuary controls the resulting entity variant.
+
+The Warden, Creaking, and Wither companion identities are reserved even if Sanctuary never enables their companion gameplay.
+
+### Additional companion identities
+
+| Persistent ID | Display Name | Material |
+| --- | --- | --- |
+| `companion_axolotl` | Axolotl Companion | `AXOLOTL_SPAWN_EGG` |
+| `companion_dolphin` | Dolphin Companion | `DOLPHIN_SPAWN_EGG` |
+
+These identities are reserved for possible future support-companion gameplay.
+
+## Format version
+
+Every current guard item uses:
+
+```text
+extendeditems:version = 1
+```
+
+This is the ExtendedItems item-format version.
+
+It is not:
+
+- The library version
+- The Sanctuary tier
+- A guard level
+- A gameplay balance version
+- An alpha/beta/release marker
+
+The alpha library may therefore publish format-version-1 items.
 
 ## Project structure
 
@@ -65,6 +205,7 @@ ExtendedItems/
 │   └── test/
 │       └── java/
 │           └── dev/liamtolkkinen/extendeditems/
+│               ├── ExtendedItemCatalogTests.java
 │               ├── ExtendedItemCreationTests.java
 │               ├── ExtendedItemIdentificationTests.java
 │               ├── ExtendedItemRegistryTests.java
@@ -109,35 +250,41 @@ The static `ExtendedItems` facade is the default public entry point.
 
 ### Create a registered item
 
-Once an item has been released into `ExtendedItemIds`, consuming code will use the registered ID:
+```java
+ItemStack item = ExtendedItems.create(
+    ExtendedItemIds.SENTRY_IRON_GOLEM);
+```
+
+or:
 
 ```java
 ItemStack item = ExtendedItems.create(
-    ExtendedItemIds.SOME_RELEASED_ITEM);
+    ExtendedItemIds.COMPANION_WARDEN);
 ```
-
-There are no production IDs yet, so this is intentionally not usable until the first real item contract is added.
 
 ### Identify an item
 
 ```java
 boolean matches = ExtendedItems.is(
     item,
-    ExtendedItemIds.SOME_RELEASED_ITEM);
+    ExtendedItemIds.SENTRY_IRON_GOLEM);
 ```
 
 ```java
 Optional<ExtendedItemId> id = ExtendedItems.getId(item);
 ```
 
-Identification only resolves IDs registered by this version of ExtendedItems. Arbitrary PDC strings do not become recognized items.
+Identification only resolves IDs registered by this version of ExtendedItems.
+
+Arbitrary PDC strings do not become recognized items.
 
 Identification and validation are intentionally separate. A malformed item can still contain a recognized ID.
 
 ### Validate an item
 
 ```java
-ExtendedItemValidationResult result = ExtendedItems.validate(item);
+ExtendedItemValidationResult result =
+    ExtendedItems.validate(item);
 
 if (!result.isValid()) {
     logger.warning(result.detail());
@@ -180,35 +327,31 @@ PDC metadata is authoritative for identity.
 
 ExtendedItems does not own gameplay instance state.
 
-A future Sanctuary-owned anchor may contain both ExtendedItems metadata and Sanctuary metadata:
+A future Sanctuary-owned item may contain both ExtendedItems metadata and Sanctuary metadata:
 
 ```text
-extendeditems:id = <released anchor ID>
+extendeditems:id = sentry_iron_golem
 extendeditems:version = 1
 
-sanctuary:anchor_id = <UUID>
+sanctuary:some_instance_id = <UUID>
 sanctuary:owner_uuid = <UUID>
-sanctuary:tier = 2
 ```
 
 ExtendedItems interprets only the `extendeditems` fields.
 
-## Adding the first real shared item
+## Adding future shared items
 
-Do not add an item until its gameplay purpose is real enough to lock the persistent identity.
-
-When that happens:
+When a new real item is needed:
 
 1. Add a public constant to `ExtendedItemIds` using a stable persistent string.
 2. Add exactly one `ExtendedItemDefinition` to the default registry in `DefaultExtendedItemService`.
 3. Set a positive format version.
 4. Define its Material and presentation metadata.
-5. Add creation tests.
-6. Add identification tests.
-7. Add validation tests.
-8. Verify consumer-plugin metadata still coexists with ExtendedItems metadata.
-9. Build and test locally.
-10. Let GitHub CI build and test the committed change.
+5. Add it to the catalog tests.
+6. Add any behavior-specific creation or validation tests needed.
+7. Verify consumer-plugin metadata still coexists with ExtendedItems metadata.
+8. Build and test locally.
+9. Let GitHub CI build and test the committed change.
 
 Once a persistent ID is released into real inventories, do not rename it casually.
 
@@ -216,24 +359,29 @@ Once a persistent ID is released into real inventories, do not rename it casuall
 
 Tests use JUnit and MockBukkit.
 
-The test suite currently uses test-only definitions to verify the framework without publishing placeholder gameplay IDs.
+The test suite contains two kinds of item definitions:
 
-Coverage includes:
+### Production catalog tests
 
-- Item creation
-- Material and display metadata
-- Persistent ID and version metadata
-- Glint handling
-- Vanilla-item rejection
-- Unknown IDs
-- Identification vs validation separation
-- Missing metadata
-- Unsupported versions
-- Invalid material
-- Invalid PDC data types
-- Registry duplicate rejection
-- Empty production registry support
-- Consumer-plugin metadata coexistence
+These verify the actual released ExtendedItems identities.
+
+The catalog tests verify:
+
+- Exactly 30 guard-related definitions exist
+- Every ID creates successfully
+- Every created item validates
+- Persistent ID matches the contract
+- Format version is `1`
+- Material matches the agreed vanilla counterpart
+- Display name matches the agreed name
+- Glint is enabled
+- All persistent IDs are unique
+
+### Framework tests
+
+Test-only definitions remain under `src/test`.
+
+They are used to verify malformed metadata, unsupported versions, duplicate registration, metadata coexistence, and other framework behavior without intentionally corrupting a production definition.
 
 Run:
 
@@ -276,11 +424,51 @@ For a normal push or pull request it:
 
 This is validation only. It does not create a GitHub Release.
 
+## Alpha release
+
+The first recommended release tag for this catalog is:
+
+```text
+v0.1.0-alpha.1
+```
+
+Create it only after:
+
+```powershell
+.\gradlew.bat clean build
+```
+
+passes locally and the normal GitHub pipeline passes on the committed catalog.
+
+Then:
+
+```powershell
+git tag v0.1.0-alpha.1
+git push origin v0.1.0-alpha.1
+```
+
+The release workflow will build:
+
+```text
+extendeditems-0.1.0-alpha.1.jar
+```
+
+and create:
+
+```text
+GitHub prerelease
+ExtendedItems 0.1.0-alpha.1
+```
+
+The alpha tag marks library/API maturity.
+
+It does not change the persisted item format version, which remains `1`.
+
 ## GitHub Releases
 
 A version tag publishes an authoritative release JAR.
 
-Example:
+Stable example:
 
 ```powershell
 git tag v0.1.0
@@ -303,15 +491,23 @@ create GitHub Release v0.1.0
 attach extendeditems-0.1.0.jar
 ```
 
-Do not create a release tag merely because the framework builds. A tag should be created when there is a version of ExtendedItems that another repository should be able to depend on reproducibly.
+Tags containing a prerelease suffix such as:
 
-God, Sanctuary, and future consumers can later be configured to download a specific release JAR automatically during their builds. They should pin a specific version rather than pulling an unspecified latest build.
+```text
+v0.1.0-alpha.1
+v0.1.0-beta.1
+v0.1.0-rc.1
+```
+
+are published as GitHub prereleases.
+
+God, Sanctuary, and future consumers should pin an exact ExtendedItems release version rather than pulling an unspecified latest build.
 
 ## Consuming from God or Sanctuary
 
 The intended distribution model is GitHub Releases, not GitHub Packages.
 
-A consuming repository will eventually declare the ExtendedItems version it needs, download the corresponding release JAR automatically, compile against it, and shade/relocate it into its own plugin JAR.
+A consuming repository will declare the ExtendedItems version it needs, download the corresponding release JAR automatically, compile against it, and shade or relocate it into its own plugin JAR.
 
 Conceptually:
 
@@ -327,7 +523,9 @@ compile against ExtendedItems
 shade/relocate ExtendedItems into the plugin JAR
 ```
 
-Persistent PDC metadata, not Java object identity, is the cross-plugin contract. God and Sanctuary can therefore carry separate shaded copies as long as both understand the same released item format.
+Persistent PDC metadata, not Java object identity, is the cross-plugin contract.
+
+God and Sanctuary can therefore carry separate shaded copies as long as both understand the same released item format.
 
 The exact download task belongs in the consuming repository and should be added when the first consumer actually needs ExtendedItems.
 
@@ -349,11 +547,15 @@ ExtendedItems does not own:
 - Economy transactions
 - Quests
 - Sanctuary progression
+- Whether a guard is obtainable
+- Whether a companion is enabled
+- Guard stats
+- Guard spawning behavior
+- Guard death behavior
 - Player ownership
 - Crafting rules
 - Inventory consumption
 - Permission checks
-- Beacon or Conduit state
 - Persistent gameplay state
 
 These boundaries are part of the library contract, not just implementation details.

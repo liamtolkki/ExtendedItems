@@ -11,7 +11,9 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.junit.jupiter.api.Test;
 
-class ExtendedItemRegistryTests extends MockBukkitTestBase {
+class ExtendedItemRegistryTests
+    extends MockBukkitTestBase
+{
     @Test
     void itemIdRequiresPersistentId() {
         assertThrows(
@@ -35,7 +37,10 @@ class ExtendedItemRegistryTests extends MockBukkitTestBase {
         ExtendedItemId second =
             new ExtendedItemId("same_test_id");
 
-        assertEquals(first, second);
+        assertEquals(
+            first,
+            second);
+
         assertEquals(
             first.hashCode(),
             second.hashCode());
@@ -51,13 +56,16 @@ class ExtendedItemRegistryTests extends MockBukkitTestBase {
         ExtendedItemDefinition second =
             definition(
                 new ExtendedItemId(
-                    TestItems.STANDARD_ID.persistentId()),
+                    TestItems.STANDARD_ID
+                        .persistentId()),
                 2);
 
         assertThrows(
             IllegalArgumentException.class,
             () -> new ExtendedItemRegistry(
-                List.of(first, second)));
+                List.of(
+                    first,
+                    second)));
     }
 
     @Test
@@ -72,14 +80,34 @@ class ExtendedItemRegistryTests extends MockBukkitTestBase {
     @Test
     void emptyRegistryIsValid() {
         ExtendedItemRegistry registry =
-            new ExtendedItemRegistry(List.of());
+            new ExtendedItemRegistry(
+                List.of());
 
         assertTrue(
-            registry.definitions().isEmpty());
+            registry
+                .definitions()
+                .isEmpty());
     }
 
     @Test
-    void productionFacadeHasNoReleasedItemDefinitionsYet() {
+    void productionFacadeRecognizesReleasedItem() {
+        var item =
+            ExtendedItems.create(
+                ExtendedItemIds.SENTRY_IRON_GOLEM);
+
+        assertTrue(
+            ExtendedItems.is(
+                item,
+                ExtendedItemIds.SENTRY_IRON_GOLEM));
+
+        assertTrue(
+            ExtendedItems
+                .validate(item)
+                .isValid());
+    }
+
+    @Test
+    void productionFacadeDoesNotRecognizeTestOnlyItem() {
         assertThrows(
             IllegalArgumentException.class,
             () -> ExtendedItems.create(
@@ -87,13 +115,15 @@ class ExtendedItemRegistryTests extends MockBukkitTestBase {
 
         assertTrue(
             ExtendedItems
-                .getId(TestItems.createStandard())
+                .getId(
+                    TestItems.createStandard())
                 .isEmpty());
 
         assertEquals(
             ExtendedItemValidationStatus.UNKNOWN_ITEM,
             ExtendedItems
-                .validate(TestItems.createStandard())
+                .validate(
+                    TestItems.createStandard())
                 .status());
     }
 

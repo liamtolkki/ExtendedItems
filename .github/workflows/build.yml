@@ -14,8 +14,10 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     outputs:
       version: ${{ steps.version.outputs.version }}
+      prerelease: ${{ steps.version.outputs.prerelease }}
 
     steps:
       - name: Checkout
@@ -39,14 +41,22 @@ jobs:
 
             if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z.-]+)?$ ]]; then
               echo "Unsupported release tag: $GITHUB_REF_NAME"
-              echo "Expected a tag such as v0.1.0 or v0.1.0-beta.1"
+              echo "Expected a tag such as v0.1.0 or v0.1.0-alpha.1"
               exit 1
             fi
 
+            if [[ "$VERSION" == *-* ]]; then
+              PRERELEASE="true"
+            else
+              PRERELEASE="false"
+            fi
+
             echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+            echo "prerelease=$PRERELEASE" >> "$GITHUB_OUTPUT"
             echo "gradle_args=-PreleaseVersion=$VERSION" >> "$GITHUB_OUTPUT"
           else
             echo "version=0.1.0-SNAPSHOT" >> "$GITHUB_OUTPUT"
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
             echo "gradle_args=" >> "$GITHUB_OUTPUT"
           fi
 
@@ -84,7 +94,20 @@ jobs:
       - name: Build release artifact
         run: ./gradlew clean build --no-daemon -PreleaseVersion=${{ needs.build.outputs.version }}
 
-      - name: Create GitHub Release
+      - name: Create GitHub prerelease
+        if: needs.build.outputs.prerelease == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            "build/libs/extendeditems-${{ needs.build.outputs.version }}.jar" \
+            --verify-tag \
+            --title "ExtendedItems ${{ needs.build.outputs.version }}" \
+            --generate-notes \
+            --prerelease
+
+      - name: Create GitHub release
+        if: needs.build.outputs.prerelease != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
