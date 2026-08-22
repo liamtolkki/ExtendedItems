@@ -21,6 +21,7 @@ import org.bukkit.persistence.PersistentDataType;
  * Default implementation backed by the immutable built-in item registry.
  */
 public final class DefaultExtendedItemService implements ExtendedItemService {
+
     private static final int CURRENT_FORMAT_VERSION = 1;
 
     private final ExtendedItemRegistry registry;
@@ -36,6 +37,86 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
         return new DefaultExtendedItemService(
             new ExtendedItemRegistry(
                 List.of(
+                    /*
+                     * Sanctuary anchors
+                     */
+
+                    definition(
+                        ExtendedItemIds.SANCTUARY_BEACON,
+                        Material.BEACON,
+                        "Sanctuary Beacon",
+                        false),
+
+                    definition(
+                        ExtendedItemIds.SANCTUARY_CONDUIT,
+                        Material.CONDUIT,
+                        "Sanctuary Conduit",
+                        false),
+
+                    /*
+                     * Sanctuary progression artifacts
+                     */
+
+                    definition(
+                        ExtendedItemIds.SANCTUARY_CORE,
+                        Material.NETHER_STAR,
+                        "Sanctuary Core"),
+
+                    definition(
+                        ExtendedItemIds.TERRITORY_KEYSTONE,
+                        Material.LODESTONE,
+                        "Territory Keystone"),
+
+                    definition(
+                        ExtendedItemIds.WATCHERS_EYE,
+                        Material.ENDER_EYE,
+                        "Watcher's Eye"),
+
+                    definition(
+                        ExtendedItemIds.WARD_STONE,
+                        Material.OBSIDIAN,
+                        "Ward Stone"),
+
+                    definition(
+                        ExtendedItemIds.BLAST_WARD,
+                        Material.CRYING_OBSIDIAN,
+                        "Blast Ward"),
+
+                    definition(
+                        ExtendedItemIds.PURIFICATION_RELIC,
+                        Material.GHAST_TEAR,
+                        "Purification Relic"),
+
+                    definition(
+                        ExtendedItemIds.SEAL_OF_KEEPING,
+                        Material.ENDER_CHEST,
+                        "Seal of Keeping"),
+
+                    definition(
+                        ExtendedItemIds.GUARDIAN_TOKEN,
+                        Material.HEART_OF_THE_SEA,
+                        "Guardian Token"),
+
+                    definition(
+                        ExtendedItemIds.SENTINEL_SEAL,
+                        Material.ECHO_SHARD,
+                        "Sentinel Seal"),
+
+                    definition(
+                        ExtendedItemIds.CONSECRATED_SHARD,
+                        Material.AMETHYST_SHARD,
+                        "Consecrated Shard"),
+
+                    definition(
+                        ExtendedItemIds.CONSECRATED_KEYSTONE,
+                        Material.RESPAWN_ANCHOR,
+                        "Consecrated Keystone"),
+
+                    definition(
+                        ExtendedItemIds.DIVINE_RELIC,
+                        Material.TOTEM_OF_UNDYING,
+                        "Divine Relic"),
+
                     /*
                      * Land sentries
                      */
@@ -442,13 +523,26 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
         Material material,
         String displayName)
     {
+        return definition(
+            id,
+            material,
+            displayName,
+            true);
+    }
+
+    private static ExtendedItemDefinition definition(
+        ExtendedItemId id,
+        Material material,
+        String displayName,
+        boolean glint)
+    {
         return new ExtendedItemDefinition(
             id,
             CURRENT_FORMAT_VERSION,
             material,
             Component.text(displayName),
             List.of(),
-            true,
+            glint,
             Set.of());
     }
 

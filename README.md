@@ -17,18 +17,23 @@ Gameplay plugins own their own state and rules. ExtendedItems only owns shared i
 
 ExtendedItems is currently an alpha library.
 
-The first released item catalog contains the guard-related item identities required by Sanctuary:
+The current released item catalog contains:
 
 ```text
+2 Sanctuary anchor IDs
+12 Sanctuary progression artifact IDs
 14 sentry IDs
 14 matching companion IDs
 2 additional companion IDs
-30 total guard-related IDs
+
+14 Sanctuary/progression IDs
+30 guard-related IDs
+44 total released IDs
 ```
 
-These persistent IDs are now part of the ExtendedItems compatibility contract.
+These persistent IDs are part of the ExtendedItems compatibility contract.
 
-The alpha release does not imply that Sanctuary must make every item obtainable or implement gameplay for every companion. ExtendedItems only establishes what each item is.
+The alpha release does not imply that Sanctuary must make every item obtainable or implement gameplay for every item. ExtendedItems only establishes what each item is.
 
 For example:
 
@@ -44,12 +49,117 @@ How is it spawned?
 Does it permanently die?"
 ```
 
+Likewise:
+
+```text
+ExtendedItems:
+"This is a Sanctuary Beacon."
+
+Sanctuary:
+"What Sanctuary does this specific Beacon represent?
+Who owns it?
+What tier is it?
+Where is it currently placed?"
+```
+
 ## Requirements
 
 - JDK 25
 - Gradle Wrapper 9.7.1
 - IntelliJ IDEA recommended
 - Paper API 26.1.2
+
+## Sanctuary anchor item rules
+
+Sanctuary anchors use their matching vanilla anchor block.
+
+```text
+Sanctuary Beacon
+BEACON
+No glint
+```
+
+```text
+Sanctuary Conduit
+CONDUIT
+No glint
+```
+
+ExtendedItems owns only the stable item identity.
+
+Sanctuary adds instance-specific metadata such as:
+
+```text
+sanctuary:anchor_id
+sanctuary:owner_uuid
+sanctuary:tier
+```
+
+The ExtendedItems identity remains stable while Sanctuary-owned instance state may change.
+
+## Sanctuary progression artifacts
+
+| Persistent ID | Display Name | Material |
+| --- | --- | --- |
+| `sanctuary_core` | Sanctuary Core | `NETHER_STAR` |
+| `territory_keystone` | Territory Keystone | `LODESTONE` |
+| `watchers_eye` | Watcher's Eye | `ENDER_EYE` |
+| `ward_stone` | Ward Stone | `OBSIDIAN` |
+| `blast_ward` | Blast Ward | `CRYING_OBSIDIAN` |
+| `purification_relic` | Purification Relic | `GHAST_TEAR` |
+| `seal_of_keeping` | Seal of Keeping | `ENDER_CHEST` |
+| `guardian_token` | Guardian Token | `HEART_OF_THE_SEA` |
+| `sentinel_seal` | Sentinel Seal | `ECHO_SHARD` |
+| `consecrated_shard` | Consecrated Shard | `AMETHYST_SHARD` |
+| `consecrated_keystone` | Consecrated Keystone | `RESPAWN_ANCHOR` |
+| `divine_relic` | Divine Relic | `TOTEM_OF_UNDYING` |
+
+All current Sanctuary progression artifacts use glint.
+
+Their intended gameplay meanings are owned by the consuming gameplay plugin.
+
+Current intended uses include:
+
+```text
+sanctuary_core
+Major artifact used for Sanctuary anchor tier upgrades.
+
+territory_keystone
+Permanent Sanctuary territory expansion artifact.
+
+watchers_eye
+Unlocks or advances Perimeter Awareness and entry notifications.
+
+ward_stone
+Unlocks or advances block-edit protection.
+
+blast_ward
+Unlocks or advances explosion protection.
+
+purification_relic
+Unlocks or advances hostile-mob protection.
+
+seal_of_keeping
+Unlocks or advances property, container, and interactable protection.
+
+guardian_token
+Unlocks or advances protection of pets, villagers, livestock, golems,
+and other protected entities.
+
+sentinel_seal
+Unlocks or advances intrusion protection.
+
+consecrated_shard
+General lower-level special progression or crafting material.
+
+consecrated_keystone
+Rare artifact used for major permanent progression.
+
+divine_relic
+Very rare high-tier divine progression artifact.
+```
+
+These descriptions describe intended use. ExtendedItems itself does not implement those gameplay effects.
 
 ## Guard item rules
 
@@ -87,7 +197,7 @@ Whether a companion is actually obtainable or enabled is a Sanctuary gameplay de
 
 ### Lore
 
-The initial alpha guard definitions do not add shared lore.
+The current item definitions do not add shared lore.
 
 ExtendedItems currently owns:
 
@@ -95,9 +205,16 @@ ExtendedItems currently owns:
 - Format version
 - Material
 - Display name
-- Glint
+- Glint setting
 
 Lore can be added later when wording is intentionally defined as part of the shared presentation contract.
+
+## Sanctuary anchor catalog
+
+| Persistent ID | Display Name | Material | Glint |
+| --- | --- | --- | --- |
+| `sanctuary_beacon` | Sanctuary Beacon | `BEACON` | No |
+| `sanctuary_conduit` | Sanctuary Conduit | `CONDUIT` | No |
 
 ## Guard item catalog
 
@@ -146,7 +263,7 @@ Lore can be added later when wording is intentionally defined as part of the sha
 
 `companion_baby_zombie` intentionally uses `ZOMBIE_SPAWN_EGG`. Sanctuary controls the resulting entity variant.
 
-The Warden, Creaking, and Wither companion identities are reserved even if Sanctuary never enables their companion gameplay.
+The Warden, Creaking, Wither, and Elder Guardian companion identities are reserved even if Sanctuary never enables their companion gameplay.
 
 ### Additional companion identities
 
@@ -159,7 +276,7 @@ These identities are reserved for possible future support-companion gameplay.
 
 ## Format version
 
-Every current guard item uses:
+Every current catalog item uses:
 
 ```text
 extendeditems:version = 1
@@ -173,7 +290,7 @@ It is not:
 - The Sanctuary tier
 - A guard level
 - A gameplay balance version
-- An alpha/beta/release marker
+- An alpha, beta, or release marker
 
 The alpha library may therefore publish format-version-1 items.
 
@@ -252,6 +369,13 @@ The static `ExtendedItems` facade is the default public entry point.
 
 ```java
 ItemStack item = ExtendedItems.create(
+    ExtendedItemIds.SANCTUARY_BEACON);
+```
+
+or:
+
+```java
+ItemStack item = ExtendedItems.create(
     ExtendedItemIds.SENTRY_IRON_GOLEM);
 ```
 
@@ -267,7 +391,7 @@ ItemStack item = ExtendedItems.create(
 ```java
 boolean matches = ExtendedItems.is(
     item,
-    ExtendedItemIds.SENTRY_IRON_GOLEM);
+    ExtendedItemIds.SANCTUARY_BEACON);
 ```
 
 ```java
@@ -327,7 +451,20 @@ PDC metadata is authoritative for identity.
 
 ExtendedItems does not own gameplay instance state.
 
-A future Sanctuary-owned item may contain both ExtendedItems metadata and Sanctuary metadata:
+A Sanctuary-owned item may contain both ExtendedItems metadata and Sanctuary metadata:
+
+```text
+extendeditems:id = sanctuary_beacon
+extendeditems:version = 1
+
+sanctuary:anchor_id = <UUID>
+sanctuary:owner_uuid = <UUID>
+sanctuary:tier = 1
+```
+
+ExtendedItems interprets only the `extendeditems` fields.
+
+The same rule applies to other stateful Sanctuary items:
 
 ```text
 extendeditems:id = sentry_iron_golem
@@ -336,8 +473,6 @@ extendeditems:version = 1
 sanctuary:some_instance_id = <UUID>
 sanctuary:owner_uuid = <UUID>
 ```
-
-ExtendedItems interprets only the `extendeditems` fields.
 
 ## Adding future shared items
 
@@ -367,15 +502,23 @@ These verify the actual released ExtendedItems identities.
 
 The catalog tests verify:
 
-- Exactly 30 guard-related definitions exist
+- Exactly 44 released definitions exist
 - Every ID creates successfully
 - Every created item validates
 - Persistent ID matches the contract
 - Format version is `1`
 - Material matches the agreed vanilla counterpart
 - Display name matches the agreed name
-- Glint is enabled
+- Glint setting matches the catalog
 - All persistent IDs are unique
+
+The current catalog contains:
+
+```text
+14 Sanctuary/progression IDs
+30 guard-related IDs
+44 total released IDs
+```
 
 ### Framework tests
 
@@ -426,39 +569,17 @@ This is validation only. It does not create a GitHub Release.
 
 ## Alpha release
 
-The first recommended release tag for this catalog is:
+The first alpha release established the initial ExtendedItems contract.
 
-```text
-v0.1.0-alpha.1
-```
+Future alpha releases may add IDs while the library API is still maturing.
 
-Create it only after:
+Before creating a release tag:
 
 ```powershell
 .\gradlew.bat clean build
 ```
 
-passes locally and the normal GitHub pipeline passes on the committed catalog.
-
-Then:
-
-```powershell
-git tag v0.1.0-alpha.1
-git push origin v0.1.0-alpha.1
-```
-
-The release workflow will build:
-
-```text
-extendeditems-0.1.0-alpha.1.jar
-```
-
-and create:
-
-```text
-GitHub prerelease
-ExtendedItems 0.1.0-alpha.1
-```
+must pass locally and the normal GitHub pipeline should pass on the committed catalog.
 
 The alpha tag marks library/API maturity.
 
@@ -546,13 +667,16 @@ ExtendedItems does not own:
 - Favor
 - Economy transactions
 - Quests
-- Sanctuary progression
+- Sanctuary progression rules
+- What an artifact unlocks
 - Whether a guard is obtainable
 - Whether a companion is enabled
 - Guard stats
 - Guard spawning behavior
 - Guard death behavior
 - Player ownership
+- Anchor ownership
+- Sanctuary tier
 - Crafting rules
 - Inventory consumption
 - Permission checks

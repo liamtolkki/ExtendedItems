@@ -8,6 +8,57 @@ package dev.liamtolkkinen.extendeditems;
  * not be casually renamed.</p>
  */
 public final class ExtendedItemIds {
+
+    /*
+     * Sanctuary anchors
+     */
+
+    public static final ExtendedItemId SANCTUARY_BEACON =
+        new ExtendedItemId("sanctuary_beacon");
+
+    public static final ExtendedItemId SANCTUARY_CONDUIT =
+        new ExtendedItemId("sanctuary_conduit");
+
+    /*
+     * Sanctuary progression artifacts
+     */
+
+    public static final ExtendedItemId SANCTUARY_CORE =
+        new ExtendedItemId("sanctuary_core");
+
+    public static final ExtendedItemId TERRITORY_KEYSTONE =
+        new ExtendedItemId("territory_keystone");
+
+    public static final ExtendedItemId WATCHERS_EYE =
+        new ExtendedItemId("watchers_eye");
+
+    public static final ExtendedItemId WARD_STONE =
+        new ExtendedItemId("ward_stone");
+
+    public static final ExtendedItemId BLAST_WARD =
+        new ExtendedItemId("blast_ward");
+
+    public static final ExtendedItemId PURIFICATION_RELIC =
+        new ExtendedItemId("purification_relic");
+
+    public static final ExtendedItemId SEAL_OF_KEEPING =
+        new ExtendedItemId("seal_of_keeping");
+
+    public static final ExtendedItemId GUARDIAN_TOKEN =
+        new ExtendedItemId("guardian_token");
+
+    public static final ExtendedItemId SENTINEL_SEAL =
+        new ExtendedItemId("sentinel_seal");
+
+    public static final ExtendedItemId CONSECRATED_SHARD =
+        new ExtendedItemId("consecrated_shard");
+
+    public static final ExtendedItemId CONSECRATED_KEYSTONE =
+        new ExtendedItemId("consecrated_keystone");
+
+    public static final ExtendedItemId DIVINE_RELIC =
+        new ExtendedItemId("divine_relic");
+
     /*
      * Land sentries
      */
