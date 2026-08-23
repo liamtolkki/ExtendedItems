@@ -172,6 +172,11 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
                         "Creaking Sentry Post"),
 
                     definition(
+                        ExtendedItemIds.SENTRY_CREEPER,
+                        Material.WAXED_WEATHERED_CUT_COPPER_SLAB,
+                        "Creeper Sentry Post"),
+
+                    definition(
                         ExtendedItemIds.SENTRY_WITHER,
                         Material.POLISHED_BLACKSTONE_SLAB,
                         "Wither Sentry Post"),
@@ -253,6 +258,11 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
                         ExtendedItemIds.COMPANION_CREAKING,
                         Material.CREAKING_SPAWN_EGG,
                         "Creaking Companion"),
+
+                    definition(
+                        ExtendedItemIds.COMPANION_CREEPER,
+                        Material.CREEPER_SPAWN_EGG,
+                        "Creeper Companion"),
 
                     definition(
                         ExtendedItemIds.COMPANION_WITHER,
