@@ -33,7 +33,7 @@ class ExtendedItemCatalogTests
             expected(ExtendedItemIds.WARD_STONE, "ward_stone", "Ward Stone", Material.OBSIDIAN),
             expected(ExtendedItemIds.BLAST_WARD, "blast_ward", "Blast Ward", Material.CRYING_OBSIDIAN),
             expected(ExtendedItemIds.PURIFICATION_RELIC, "purification_relic", "Purification Relic", Material.GHAST_TEAR),
-            expected(ExtendedItemIds.SEAL_OF_KEEPING, "seal_of_keeping", "Seal of Keeping", Material.ENDER_CHEST),
+            expected(ExtendedItemIds.SEAL_OF_KEEPING, "seal_of_keeping", "Seal of Keeping", Material.SHULKER_SHELL),
             expected(ExtendedItemIds.GUARDIAN_TOKEN, "guardian_token", "Guardian Token", Material.HEART_OF_THE_SEA),
             expected(ExtendedItemIds.SENTINEL_SEAL, "sentinel_seal", "Sentinel Seal", Material.ECHO_SHARD),
             expected(ExtendedItemIds.CONSECRATED_SHARD_FRAGMENT, "consecrated_shard_fragment", "Consecrated Shard Fragment", Material.SMALL_AMETHYST_BUD),
