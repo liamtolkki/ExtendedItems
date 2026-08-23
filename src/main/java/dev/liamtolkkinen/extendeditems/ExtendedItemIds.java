@@ -50,6 +50,9 @@ public final class ExtendedItemIds {
     public static final ExtendedItemId SENTINEL_SEAL =
         new ExtendedItemId("sentinel_seal");
 
+    public static final ExtendedItemId CONSECRATED_SHARD_FRAGMENT =
+        new ExtendedItemId("consecrated_shard_fragment");
+
     public static final ExtendedItemId CONSECRATED_SHARD =
         new ExtendedItemId("consecrated_shard");
 
