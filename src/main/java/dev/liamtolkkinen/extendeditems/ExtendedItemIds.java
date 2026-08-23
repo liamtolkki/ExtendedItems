@@ -20,6 +20,13 @@ public final class ExtendedItemIds {
         new ExtendedItemId("sanctuary_conduit");
 
     /*
+     * Sanctuary interaction items
+     */
+
+    public static final ExtendedItemId DIVINE_ALTAR =
+        new ExtendedItemId("divine_altar");
+
+    /*
      * Sanctuary progression artifacts
      */
 
