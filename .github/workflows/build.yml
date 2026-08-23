@@ -38,25 +38,26 @@ jobs:
         run: |
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
             VERSION="${GITHUB_REF_NAME#v}"
-          elif [[ "${{ github.event.head_commit.message }}" == "Release ExtendedItems 0.1.0-alpha.7" ]]; then
-            VERSION="0.1.0-alpha.7"
-          else
-            VERSION="0.1.0-SNAPSHOT"
-          fi
 
-          if [[ "$VERSION" == *-* ]]; then
-            PRERELEASE="true"
-          else
-            PRERELEASE="false"
-          fi
+            if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z.-]+)?$ ]]; then
+              echo "Unsupported release tag: $GITHUB_REF_NAME"
+              echo "Expected a tag such as v0.1.0 or v0.1.0-alpha.1"
+              exit 1
+            fi
 
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "prerelease=$PRERELEASE" >> "$GITHUB_OUTPUT"
+            if [[ "$VERSION" == *-* ]]; then
+              PRERELEASE="true"
+            else
+              PRERELEASE="false"
+            fi
 
-          if [[ "$VERSION" == "0.1.0-SNAPSHOT" ]]; then
-            echo "gradle_args=" >> "$GITHUB_OUTPUT"
-          else
+            echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+            echo "prerelease=$PRERELEASE" >> "$GITHUB_OUTPUT"
             echo "gradle_args=-PreleaseVersion=$VERSION" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=0.1.0-SNAPSHOT" >> "$GITHUB_OUTPUT"
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+            echo "gradle_args=" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Build and test
@@ -70,7 +71,7 @@ jobs:
           if-no-files-found: error
 
   release:
-    if: startsWith(github.ref, 'refs/tags/v') || github.event.head_commit.message == 'Release ExtendedItems 0.1.0-alpha.7'
+    if: startsWith(github.ref, 'refs/tags/v')
     needs: build
     runs-on: ubuntu-latest
 
@@ -93,20 +94,8 @@ jobs:
       - name: Build release artifact
         run: ./gradlew clean build --no-daemon -PreleaseVersion=${{ needs.build.outputs.version }}
 
-      - name: Create GitHub prerelease from release commit
-        if: github.event.head_commit.message == 'Release ExtendedItems 0.1.0-alpha.7'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh release create "v0.1.0-alpha.7" \
-            "build/libs/extendeditems-0.1.0-alpha.7.jar" \
-            --target "$GITHUB_SHA" \
-            --title "ExtendedItems 0.1.0-alpha.7" \
-            --generate-notes \
-            --prerelease
-
       - name: Create GitHub prerelease
-        if: startsWith(github.ref, 'refs/tags/v') && needs.build.outputs.prerelease == 'true'
+        if: needs.build.outputs.prerelease == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -118,7 +107,7 @@ jobs:
             --prerelease
 
       - name: Create GitHub release
-        if: startsWith(github.ref, 'refs/tags/v') && needs.build.outputs.prerelease != 'true'
+        if: needs.build.outputs.prerelease != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
