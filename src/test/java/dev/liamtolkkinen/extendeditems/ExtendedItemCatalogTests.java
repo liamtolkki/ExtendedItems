@@ -35,6 +35,7 @@ class ExtendedItemCatalogTests
             expected(ExtendedItemIds.SEAL_OF_KEEPING, "seal_of_keeping", "Seal of Keeping", Material.ENDER_CHEST),
             expected(ExtendedItemIds.GUARDIAN_TOKEN, "guardian_token", "Guardian Token", Material.HEART_OF_THE_SEA),
             expected(ExtendedItemIds.SENTINEL_SEAL, "sentinel_seal", "Sentinel Seal", Material.ECHO_SHARD),
+            expected(ExtendedItemIds.CONSECRATED_SHARD_FRAGMENT, "consecrated_shard_fragment", "Consecrated Shard Fragment", Material.AMETHYST_SHARD),
             expected(ExtendedItemIds.CONSECRATED_SHARD, "consecrated_shard", "Consecrated Shard", Material.AMETHYST_SHARD),
             expected(ExtendedItemIds.CONSECRATED_KEYSTONE, "consecrated_keystone", "Consecrated Keystone", Material.RESPAWN_ANCHOR),
             expected(ExtendedItemIds.DIVINE_RELIC, "divine_relic", "Divine Relic", Material.TOTEM_OF_UNDYING),
@@ -72,15 +73,15 @@ class ExtendedItemCatalogTests
             expected(ExtendedItemIds.COMPANION_DOLPHIN, "companion_dolphin", "Dolphin Companion", Material.DOLPHIN_SPAWN_EGG));
 
     @Test
-    void catalogContainsFortySixPublishedIds() {
+    void catalogContainsFortySevenPublishedIds() {
         long publicItemIdFields =
             java.util.Arrays
                 .stream(ExtendedItemIds.class.getDeclaredFields())
                 .filter(ExtendedItemCatalogTests::isPublishedItemIdField)
                 .count();
 
-        assertEquals(46, publicItemIdFields);
-        assertEquals(46, EXPECTED_ITEMS.size());
+        assertEquals(47, publicItemIdFields);
+        assertEquals(47, EXPECTED_ITEMS.size());
     }
 
     @Test
