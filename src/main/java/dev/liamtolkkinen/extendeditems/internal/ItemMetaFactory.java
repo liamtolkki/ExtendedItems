@@ -2,6 +2,9 @@ package dev.liamtolkkinen.extendeditems.internal;
 
 import dev.liamtolkkinen.extendeditems.ExtendedItemDefinition;
 import java.util.Objects;
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -22,10 +25,15 @@ public final class ItemMetaFactory {
 
             if (definition.glint()) {
                 meta.setEnchantmentGlintOverride(true);
+
+                if (definition.material() == Material.ENDER_CHEST) {
+                    meta.addEnchant(Enchantment.UNBREAKING, 1, true);
+                    meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                }
             }
 
             if (!definition.itemFlags().isEmpty()) {
-                meta.addItemFlags(definition.itemFlags().toArray(org.bukkit.inventory.ItemFlag[]::new));
+                meta.addItemFlags(definition.itemFlags().toArray(ItemFlag[]::new));
             }
 
             meta.getPersistentDataContainer().set(
