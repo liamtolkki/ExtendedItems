@@ -26,6 +26,7 @@ class ExtendedItemCatalogTests
         List.of(
             expected(ExtendedItemIds.SANCTUARY_BEACON, "sanctuary_beacon", "Sanctuary Beacon", Material.BEACON, false),
             expected(ExtendedItemIds.SANCTUARY_CONDUIT, "sanctuary_conduit", "Sanctuary Conduit", Material.CONDUIT, false),
+            expected(ExtendedItemIds.DIVINE_ALTAR, "divine_altar", "Divine Altar", Material.LECTERN),
             expected(ExtendedItemIds.SANCTUARY_CORE, "sanctuary_core", "Sanctuary Core", Material.NETHER_STAR),
             expected(ExtendedItemIds.TERRITORY_KEYSTONE, "territory_keystone", "Territory Keystone", Material.LODESTONE),
             expected(ExtendedItemIds.WATCHERS_EYE, "watchers_eye", "Watcher's Eye", Material.ENDER_EYE),
@@ -73,15 +74,15 @@ class ExtendedItemCatalogTests
             expected(ExtendedItemIds.COMPANION_DOLPHIN, "companion_dolphin", "Dolphin Companion", Material.DOLPHIN_SPAWN_EGG));
 
     @Test
-    void catalogContainsFortySevenPublishedIds() {
+    void catalogContainsFortyEightPublishedIds() {
         long publicItemIdFields =
             java.util.Arrays
                 .stream(ExtendedItemIds.class.getDeclaredFields())
                 .filter(ExtendedItemCatalogTests::isPublishedItemIdField)
                 .count();
 
-        assertEquals(47, publicItemIdFields);
-        assertEquals(47, EXPECTED_ITEMS.size());
+        assertEquals(48, publicItemIdFields);
+        assertEquals(48, EXPECTED_ITEMS.size());
     }
 
     @Test
