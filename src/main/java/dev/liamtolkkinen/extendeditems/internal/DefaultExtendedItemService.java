@@ -110,7 +110,7 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
 
                     definition(
                         ExtendedItemIds.CONSECRATED_SHARD_FRAGMENT,
-                        Material.AMETHYST_SHARD,
+                        Material.SMALL_AMETHYST_BUD,
                         "Consecrated Shard Fragment"),
 
                     definition(

@@ -36,7 +36,7 @@ class ExtendedItemCatalogTests
             expected(ExtendedItemIds.SEAL_OF_KEEPING, "seal_of_keeping", "Seal of Keeping", Material.ENDER_CHEST),
             expected(ExtendedItemIds.GUARDIAN_TOKEN, "guardian_token", "Guardian Token", Material.HEART_OF_THE_SEA),
             expected(ExtendedItemIds.SENTINEL_SEAL, "sentinel_seal", "Sentinel Seal", Material.ECHO_SHARD),
-            expected(ExtendedItemIds.CONSECRATED_SHARD_FRAGMENT, "consecrated_shard_fragment", "Consecrated Shard Fragment", Material.AMETHYST_SHARD),
+            expected(ExtendedItemIds.CONSECRATED_SHARD_FRAGMENT, "consecrated_shard_fragment", "Consecrated Shard Fragment", Material.SMALL_AMETHYST_BUD),
             expected(ExtendedItemIds.CONSECRATED_SHARD, "consecrated_shard", "Consecrated Shard", Material.AMETHYST_SHARD),
             expected(ExtendedItemIds.CONSECRATED_KEYSTONE, "consecrated_keystone", "Consecrated Keystone", Material.RESPAWN_ANCHOR),
             expected(ExtendedItemIds.DIVINE_RELIC, "divine_relic", "Divine Relic", Material.TOTEM_OF_UNDYING),
