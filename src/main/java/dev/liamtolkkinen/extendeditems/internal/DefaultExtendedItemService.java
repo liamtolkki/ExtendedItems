@@ -95,7 +95,7 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
 
                     definition(
                         ExtendedItemIds.SEAL_OF_KEEPING,
-                        Material.ENDER_CHEST,
+                        Material.SHULKER_SHELL,
                         "Seal of Keeping"),
 
                     definition(
