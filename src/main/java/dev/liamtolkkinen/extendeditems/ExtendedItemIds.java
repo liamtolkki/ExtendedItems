@@ -93,6 +93,9 @@ public final class ExtendedItemIds {
     public static final ExtendedItemId SENTRY_CREAKING =
         new ExtendedItemId("sentry_creaking");
 
+    public static final ExtendedItemId SENTRY_CREEPER =
+        new ExtendedItemId("sentry_creeper");
+
     public static final ExtendedItemId SENTRY_WITHER =
         new ExtendedItemId("sentry_wither");
 
@@ -142,6 +145,9 @@ public final class ExtendedItemIds {
 
     public static final ExtendedItemId COMPANION_CREAKING =
         new ExtendedItemId("companion_creaking");
+
+    public static final ExtendedItemId COMPANION_CREEPER =
+        new ExtendedItemId("companion_creeper");
 
     public static final ExtendedItemId COMPANION_WITHER =
         new ExtendedItemId("companion_wither");
