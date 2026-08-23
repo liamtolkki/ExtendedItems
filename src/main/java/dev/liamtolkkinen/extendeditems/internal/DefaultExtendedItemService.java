@@ -27,10 +27,7 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
     private final ExtendedItemRegistry registry;
 
     public DefaultExtendedItemService(ExtendedItemRegistry registry) {
-        this.registry =
-            Objects.requireNonNull(
-                registry,
-                "registry");
+        this.registry = Objects.requireNonNull(registry, "registry");
     }
 
     public static DefaultExtendedItemService createDefault() {
@@ -101,6 +98,11 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
                         ExtendedItemIds.SENTINEL_SEAL,
                         Material.ECHO_SHARD,
                         "Sentinel Seal"),
+
+                    definition(
+                        ExtendedItemIds.CONSECRATED_SHARD_FRAGMENT,
+                        Material.AMETHYST_SHARD,
+                        "Consecrated Shard Fragment"),
 
                     definition(
                         ExtendedItemIds.CONSECRATED_SHARD,
@@ -305,74 +307,47 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
 
     @Override
     public ItemStack create(ExtendedItemId id) {
-        ExtendedItemDefinition definition =
-            registry.require(id);
+        ExtendedItemDefinition definition = registry.require(id);
 
-        ItemStack item =
-            new ItemStack(definition.material());
+        ItemStack item = new ItemStack(definition.material());
 
-        ItemMetaFactory.apply(
-            item,
-            definition);
+        ItemMetaFactory.apply(item, definition);
 
         return item;
     }
 
     @Override
-    public boolean is(
-        ItemStack item,
-        ExtendedItemId expected)
-    {
-        Objects.requireNonNull(
-            expected,
-            "expected");
+    public boolean is(ItemStack item, ExtendedItemId expected) {
+        Objects.requireNonNull(expected, "expected");
 
-        return getId(item)
-            .filter(expected::equals)
-            .isPresent();
+        return getId(item).filter(expected::equals).isPresent();
     }
 
     @Override
-    public Optional<ExtendedItemId> getId(
-        ItemStack item)
-    {
-        if (item == null ||
-            item.getType().isAir())
-        {
+    public Optional<ExtendedItemId> getId(ItemStack item) {
+        if (item == null || item.getType().isAir()) {
             return Optional.empty();
         }
 
-        ItemMeta meta =
-            item.getItemMeta();
+        ItemMeta meta = item.getItemMeta();
 
         if (meta == null) {
             return Optional.empty();
         }
 
-        PersistentDataContainer pdc =
-            meta.getPersistentDataContainer();
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
 
-        if (!pdc.has(
-            ExtendedItemKeys.ID,
-            PersistentDataType.STRING))
-        {
+        if (!pdc.has(ExtendedItemKeys.ID, PersistentDataType.STRING)) {
             return Optional.empty();
         }
 
-        String persistentId =
-            pdc.get(
-                ExtendedItemKeys.ID,
-                PersistentDataType.STRING);
+        String persistentId = pdc.get(ExtendedItemKeys.ID, PersistentDataType.STRING);
 
-        return registry
-            .findByPersistentId(persistentId)
-            .map(ExtendedItemDefinition::id);
+        return registry.findByPersistentId(persistentId).map(ExtendedItemDefinition::id);
     }
 
     @Override
-    public ExtendedItemValidationResult validate(
-        ItemStack item)
-    {
+    public ExtendedItemValidationResult validate(ItemStack item) {
         if (item == null) {
             return result(
                 ExtendedItemValidationStatus.INVALID_FORMAT,
@@ -389,8 +364,7 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
                 "Air does not contain an ExtendedItems ID.");
         }
 
-        ItemMeta meta =
-            item.getItemMeta();
+        ItemMeta meta = item.getItemMeta();
 
         if (meta == null) {
             return result(
@@ -400,8 +374,7 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
                 "Item has no ItemMeta and therefore no ExtendedItems ID.");
         }
 
-        PersistentDataContainer pdc =
-            meta.getPersistentDataContainer();
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
 
         if (!pdc.has(ExtendedItemKeys.ID)) {
             return result(
@@ -411,10 +384,7 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
                 "Missing extendeditems:id metadata.");
         }
 
-        if (!pdc.has(
-            ExtendedItemKeys.ID,
-            PersistentDataType.STRING))
-        {
+        if (!pdc.has(ExtendedItemKeys.ID, PersistentDataType.STRING)) {
             return result(
                 ExtendedItemValidationStatus.INVALID_FORMAT,
                 null,
@@ -422,14 +392,9 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
                 "extendeditems:id exists but is not a STRING.");
         }
 
-        String persistentId =
-            pdc.get(
-                ExtendedItemKeys.ID,
-                PersistentDataType.STRING);
+        String persistentId = pdc.get(ExtendedItemKeys.ID, PersistentDataType.STRING);
 
-        if (persistentId == null ||
-            persistentId.isBlank())
-        {
+        if (persistentId == null || persistentId.isBlank()) {
             return result(
                 ExtendedItemValidationStatus.INVALID_FORMAT,
                 null,
@@ -445,13 +410,10 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
                 ExtendedItemValidationStatus.UNKNOWN_ITEM,
                 null,
                 readVersionIfInteger(pdc),
-                "Unknown ExtendedItems persistent ID '"
-                    + persistentId
-                    + "'.");
+                "Unknown ExtendedItems persistent ID '" + persistentId + "'.");
         }
 
-        ExtendedItemDefinition definition =
-            definitionOptional.get();
+        ExtendedItemDefinition definition = definitionOptional.get();
 
         if (!pdc.has(ExtendedItemKeys.VERSION)) {
             return result(
@@ -461,10 +423,7 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
                 "Missing extendeditems:version metadata.");
         }
 
-        if (!pdc.has(
-            ExtendedItemKeys.VERSION,
-            PersistentDataType.INTEGER))
-        {
+        if (!pdc.has(ExtendedItemKeys.VERSION, PersistentDataType.INTEGER)) {
             return result(
                 ExtendedItemValidationStatus.INVALID_FORMAT,
                 definition.id(),
@@ -472,14 +431,9 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
                 "extendeditems:version exists but is not an INTEGER.");
         }
 
-        Integer version =
-            pdc.get(
-                ExtendedItemKeys.VERSION,
-                PersistentDataType.INTEGER);
+        Integer version = pdc.get(ExtendedItemKeys.VERSION, PersistentDataType.INTEGER);
 
-        if (version == null ||
-            version <= 0)
-        {
+        if (version == null || version <= 0) {
             return result(
                 ExtendedItemValidationStatus.INVALID_FORMAT,
                 definition.id(),
@@ -501,9 +455,7 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
                     + ".");
         }
 
-        if (item.getType() !=
-            definition.material())
-        {
+        if (item.getType() != definition.material()) {
             return result(
                 ExtendedItemValidationStatus.INVALID_MATERIAL,
                 definition.id(),
@@ -519,9 +471,7 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
             ExtendedItemValidationStatus.VALID,
             definition.id(),
             version,
-            "Item is a valid "
-                + definition.id()
-                + ".");
+            "Item is a valid " + definition.id() + ".");
     }
 
     ExtendedItemRegistry registry() {
@@ -533,11 +483,7 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
         Material material,
         String displayName)
     {
-        return definition(
-            id,
-            material,
-            displayName,
-            true);
+        return definition(id, material, displayName, true);
     }
 
     private static ExtendedItemDefinition definition(
@@ -556,19 +502,12 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
             Set.of());
     }
 
-    private static Integer readVersionIfInteger(
-        PersistentDataContainer pdc)
-    {
-        if (!pdc.has(
-            ExtendedItemKeys.VERSION,
-            PersistentDataType.INTEGER))
-        {
+    private static Integer readVersionIfInteger(PersistentDataContainer pdc) {
+        if (!pdc.has(ExtendedItemKeys.VERSION, PersistentDataType.INTEGER)) {
             return null;
         }
 
-        return pdc.get(
-            ExtendedItemKeys.VERSION,
-            PersistentDataType.INTEGER);
+        return pdc.get(ExtendedItemKeys.VERSION, PersistentDataType.INTEGER);
     }
 
     private static ExtendedItemValidationResult result(
@@ -577,10 +516,6 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
         Integer foundVersion,
         String detail)
     {
-        return ExtendedItemValidationResult.of(
-            status,
-            itemId,
-            foundVersion,
-            detail);
+        return ExtendedItemValidationResult.of(status, itemId, foundVersion, detail);
     }
 }
