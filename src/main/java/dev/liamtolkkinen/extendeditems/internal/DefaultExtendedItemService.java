@@ -51,6 +51,15 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
                         false),
 
                     /*
+                     * Sanctuary interaction items
+                     */
+
+                    definition(
+                        ExtendedItemIds.DIVINE_ALTAR,
+                        Material.LECTERN,
+                        "Divine Altar"),
+
+                    /*
                      * Sanctuary progression artifacts
                      */
 
