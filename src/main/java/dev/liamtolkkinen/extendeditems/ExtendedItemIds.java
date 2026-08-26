@@ -39,23 +39,8 @@ public final class ExtendedItemIds {
     public static final ExtendedItemId WATCHERS_EYE =
         new ExtendedItemId("watchers_eye");
 
-    public static final ExtendedItemId WARD_STONE =
-        new ExtendedItemId("ward_stone");
-
-    public static final ExtendedItemId BLAST_WARD =
-        new ExtendedItemId("blast_ward");
-
-    public static final ExtendedItemId PURIFICATION_RELIC =
-        new ExtendedItemId("purification_relic");
-
-    public static final ExtendedItemId SEAL_OF_KEEPING =
-        new ExtendedItemId("seal_of_keeping");
-
-    public static final ExtendedItemId GUARDIAN_TOKEN =
-        new ExtendedItemId("guardian_token");
-
-    public static final ExtendedItemId SENTINEL_SEAL =
-        new ExtendedItemId("sentinel_seal");
+    public static final ExtendedItemId ATTUNEMENT_RELIC =
+        new ExtendedItemId("attunement_relic");
 
     public static final ExtendedItemId CONSECRATED_SHARD_FRAGMENT =
         new ExtendedItemId("consecrated_shard_fragment");

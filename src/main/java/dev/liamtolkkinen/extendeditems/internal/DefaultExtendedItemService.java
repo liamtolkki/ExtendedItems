@@ -65,7 +65,7 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
 
                     definition(
                         ExtendedItemIds.SANCTUARY_CORE,
-                        Material.NETHER_STAR,
+                        Material.END_CRYSTAL,
                         "Sanctuary Core"),
 
                     definition(
@@ -79,34 +79,9 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
                         "Watcher's Eye"),
 
                     definition(
-                        ExtendedItemIds.WARD_STONE,
-                        Material.OBSIDIAN,
-                        "Ward Stone"),
-
-                    definition(
-                        ExtendedItemIds.BLAST_WARD,
-                        Material.CRYING_OBSIDIAN,
-                        "Blast Ward"),
-
-                    definition(
-                        ExtendedItemIds.PURIFICATION_RELIC,
-                        Material.GHAST_TEAR,
-                        "Purification Relic"),
-
-                    definition(
-                        ExtendedItemIds.SEAL_OF_KEEPING,
-                        Material.SHULKER_SHELL,
-                        "Seal of Keeping"),
-
-                    definition(
-                        ExtendedItemIds.GUARDIAN_TOKEN,
-                        Material.HEART_OF_THE_SEA,
-                        "Guardian Token"),
-
-                    definition(
-                        ExtendedItemIds.SENTINEL_SEAL,
+                        ExtendedItemIds.ATTUNEMENT_RELIC,
                         Material.ECHO_SHARD,
-                        "Sentinel Seal"),
+                        "Attunement Relic"),
 
                     definition(
                         ExtendedItemIds.CONSECRATED_SHARD_FRAGMENT,

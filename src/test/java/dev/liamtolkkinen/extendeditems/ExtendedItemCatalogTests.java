@@ -27,15 +27,10 @@ class ExtendedItemCatalogTests
             expected(ExtendedItemIds.SANCTUARY_BEACON, "sanctuary_beacon", "Sanctuary Beacon", Material.BEACON, false),
             expected(ExtendedItemIds.SANCTUARY_CONDUIT, "sanctuary_conduit", "Sanctuary Conduit", Material.CONDUIT, false),
             expected(ExtendedItemIds.DIVINE_ALTAR, "divine_altar", "Divine Altar", Material.LECTERN),
-            expected(ExtendedItemIds.SANCTUARY_CORE, "sanctuary_core", "Sanctuary Core", Material.NETHER_STAR),
+            expected(ExtendedItemIds.SANCTUARY_CORE, "sanctuary_core", "Sanctuary Core", Material.END_CRYSTAL),
             expected(ExtendedItemIds.TERRITORY_KEYSTONE, "territory_keystone", "Territory Keystone", Material.LODESTONE),
             expected(ExtendedItemIds.WATCHERS_EYE, "watchers_eye", "Watcher's Eye", Material.ENDER_EYE),
-            expected(ExtendedItemIds.WARD_STONE, "ward_stone", "Ward Stone", Material.OBSIDIAN),
-            expected(ExtendedItemIds.BLAST_WARD, "blast_ward", "Blast Ward", Material.CRYING_OBSIDIAN),
-            expected(ExtendedItemIds.PURIFICATION_RELIC, "purification_relic", "Purification Relic", Material.GHAST_TEAR),
-            expected(ExtendedItemIds.SEAL_OF_KEEPING, "seal_of_keeping", "Seal of Keeping", Material.SHULKER_SHELL),
-            expected(ExtendedItemIds.GUARDIAN_TOKEN, "guardian_token", "Guardian Token", Material.HEART_OF_THE_SEA),
-            expected(ExtendedItemIds.SENTINEL_SEAL, "sentinel_seal", "Sentinel Seal", Material.ECHO_SHARD),
+            expected(ExtendedItemIds.ATTUNEMENT_RELIC, "attunement_relic", "Attunement Relic", Material.ECHO_SHARD),
             expected(ExtendedItemIds.CONSECRATED_SHARD_FRAGMENT, "consecrated_shard_fragment", "Consecrated Shard Fragment", Material.SMALL_AMETHYST_BUD),
             expected(ExtendedItemIds.CONSECRATED_SHARD, "consecrated_shard", "Consecrated Shard", Material.AMETHYST_SHARD),
             expected(ExtendedItemIds.CONSECRATED_KEYSTONE, "consecrated_keystone", "Consecrated Keystone", Material.RESPAWN_ANCHOR),
@@ -74,15 +69,15 @@ class ExtendedItemCatalogTests
             expected(ExtendedItemIds.COMPANION_DOLPHIN, "companion_dolphin", "Dolphin Companion", Material.DOLPHIN_SPAWN_EGG));
 
     @Test
-    void catalogContainsFortyEightPublishedIds() {
+    void catalogContainsFortyThreePublishedIds() {
         long publicItemIdFields =
             java.util.Arrays
                 .stream(ExtendedItemIds.class.getDeclaredFields())
                 .filter(ExtendedItemCatalogTests::isPublishedItemIdField)
                 .count();
 
-        assertEquals(48, publicItemIdFields);
-        assertEquals(48, EXPECTED_ITEMS.size());
+        assertEquals(43, publicItemIdFields);
+        assertEquals(43, EXPECTED_ITEMS.size());
     }
 
     @Test
