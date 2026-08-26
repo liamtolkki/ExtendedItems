@@ -25,7 +25,7 @@ class ExtendedItemCatalogTests
     private static final List<ExpectedItem> EXPECTED_ITEMS =
         List.of(
             expected(ExtendedItemIds.SANCTUARY_BEACON, "sanctuary_beacon", "Sanctuary Beacon", Material.BEACON, false),
-            expected(ExtendedItemIds.SANCTUARY_CONDUIT, "sanctuary_conduit", "Sanctuary Conduit", Material.CONDUIT, false),
+            expected(ExtendedItemIds.SANCTUARY_CONDUIT, "sanctuary_conduit", "Sanctuary Conduit", Material.CONDUIT, true),
             expected(ExtendedItemIds.DIVINE_ALTAR, "divine_altar", "Divine Altar", Material.LECTERN),
             expected(ExtendedItemIds.SANCTUARY_CORE, "sanctuary_core", "Sanctuary Core", Material.END_CRYSTAL),
             expected(ExtendedItemIds.TERRITORY_KEYSTONE, "territory_keystone", "Territory Keystone", Material.LODESTONE),
