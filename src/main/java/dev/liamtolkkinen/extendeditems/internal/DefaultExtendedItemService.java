@@ -48,7 +48,7 @@ public final class DefaultExtendedItemService implements ExtendedItemService {
                         ExtendedItemIds.SANCTUARY_CONDUIT,
                         Material.CONDUIT,
                         "Sanctuary Conduit",
-                        false),
+                        true),
 
                     /*
                      * Sanctuary interaction items
